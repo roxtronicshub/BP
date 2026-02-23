@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareTech | BP Monitor Service Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .brand-gradient { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .input-focus:focus { border-color: #3b82f6; ring: 2px; ring-color: #bfdbfe; outline: none; }
+        .modal-overlay { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); }
+        /* Remove arrows from number input */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+
+    <!-- Navbar/Header -->
+    <nav class="brand-gradient text-white shadow-xl">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center space-x-3 mb-4 md:mb-0">
+                <div class="bg-white p-2 rounded-xl shadow-inner">
+                    <svg class="w-8 h-8 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12h-4l-3 9L9 3l-3 9H2" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-extrabold tracking-tight uppercase">CareTech Repair Services</h1>
+                    <p class="text-xs font-medium opacity-80 uppercase tracking-widest flex items-center">
+                        <span class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
+                        Precision BP Monitor Repair
+                    </p>
+                </div>
+            </div>
+            <div class="text-sm font-medium bg-blue-800/40 px-5 py-2.5 rounded-full border border-blue-400/30 backdrop-blur-sm">
+                Expert Support: <span class="font-bold">+91 7987315017</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-4 py-10">
+        
+        <!-- Tab Navigation -->
+        <div class="flex p-1.5 bg-slate-200 rounded-2xl mb-10 max-w-sm mx-auto shadow-inner">
+            <button onclick="showTab('track')" id="btn-track" class="flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 bg-white text-blue-700 shadow-md tracking-wider">
+                TRACK STATUS
+            </button>
+            <button onclick="showTab('register')" id="btn-register" class="flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 text-slate-600 tracking-wider">
+                NEW REPAIR
+            </button>
+        </div>
+
+        <!-- TRACKING SECTION -->
+        <div id="tab-track" class="tab-content active">
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-8 md:p-12">
+                    <div class="mb-8 text-center md:text-left">
+                        <h2 class="text-2xl font-bold text-slate-800">Track Service Progress</h2>
+                        <p class="text-slate-500 text-sm mt-1">Enter Repair ID or registered Mobile Number to see current status.</p>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <div class="relative flex-1">
+                            <input type="text" id="searchId" placeholder="ID (e.g. BP-XXXXXX)" 
+                                   class="w-full pl-5 pr-5 py-4 border border-slate-300 rounded-2xl input-focus font-semibold text-slate-700 placeholder:text-slate-400 bg-slate-50/50">
+                        </div>
+                        <button onclick="fetchStatus()" 
+                                class="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-bold transition-all transform active:scale-95 shadow-lg shadow-blue-200 uppercase tracking-wide">
+                            Track Now
+                        </button>
+                    </div>
+
+                    <div id="searchResult" class="hidden mt-10 p-1 bg-slate-50 rounded-3xl border border-slate-200">
+                        <div id="resultContent" class="p-8"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REGISTRATION SECTION -->
+        <div id="tab-register" class="tab-content">
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-8 md:p-12">
+                    <div class="mb-10">
+                        <h2 class="text-2xl font-bold text-slate-800 text-center sm:text-left uppercase tracking-tight">Register New Device</h2>
+                        <p class="text-slate-500 text-sm mt-1 text-center sm:text-left">Fill in the technical and customer details below.</p>
+                    </div>
+
+                    <form id="regForm" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Customer Full Name</label>
+                            <input type="text" id="custName" required placeholder="Full Name" 
+                                   class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl input-focus font-medium">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Contact Number</label>
+                            <!-- Restricted to 10 digits -->
+                            <input type="number" id="custMobile" required placeholder="10 Digit Number" 
+                                   oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"
+                                   class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl input-focus font-medium">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Service ID (Auto)</label>
+                            <input type="text" id="repairId" readonly 
+                                   class="w-full p-4 bg-blue-50 border border-blue-100 rounded-2xl font-mono font-bold text-blue-700 text-lg">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Device Model</label>
+                            <input type="text" id="machineModel" required placeholder="Model/Brand Name" 
+                                   class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl input-focus font-medium">
+                        </div>
+                        <div class="md:col-span-2 space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Fault Description</label>
+                            <textarea id="problem" rows="3" required placeholder="Describe the technical issue..." 
+                                      class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl input-focus font-medium"></textarea>
+                        </div>
+                        <button type="submit" 
+                                class="md:col-span-2 bg-blue-600 hover:bg-blue-700 text-white py-5 rounded-2xl font-black text-lg transition-all shadow-xl shadow-blue-200 mt-4 uppercase tracking-widest">
+                            Confirm Registration
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Professional Success Modal -->
+    <div id="successModal" class="fixed inset-0 flex items-center justify-center z-50 hidden modal-overlay p-4">
+        <div class="bg-white rounded-[2.5rem] shadow-2xl max-w-md w-full overflow-hidden border border-slate-100">
+            <div class="brand-gradient p-10 text-center relative">
+                <div class="bg-white/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/30 backdrop-blur-md">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h3 class="text-3xl font-black text-white uppercase tracking-tight">Registered</h3>
+                <p class="text-blue-100 text-xs mt-1 font-bold uppercase tracking-widest opacity-80">Device Entry Successful</p>
+            </div>
+            <div class="p-10 text-center">
+                <p class="text-slate-400 mb-2 font-bold text-[10px] uppercase tracking-[0.2em]">Customer ID Key</p>
+                <div class="bg-slate-50 border-2 border-dashed border-slate-200 p-6 rounded-3xl mb-10">
+                    <span id="modalIdDisplay" class="text-3xl font-black text-slate-800 tracking-[0.15em] font-mono"></span>
+                </div>
+                <button onclick="closeModal()" class="w-full bg-slate-900 text-white font-black py-5 rounded-2xl hover:bg-black transition-all shadow-xl uppercase tracking-widest text-sm">
+                    Back to Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 hidden bg-slate-900 text-white px-8 py-4 rounded-2xl shadow-2xl text-xs font-black uppercase tracking-widest z-[100]"></div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxEAqcoW12GHjEDiFeE4vQTuA1YuXv0g5tQtchR5lqVkn8GMzmmHkA2G7Cg224C8pKz/exec";
+
+        function generateUniqueID() {
+            const date = new Date();
+            const timestamp = date.getTime().toString().slice(-6);
+            const random = Math.floor(Math.random() * 90) + 10;
+            const newID = `BP-${timestamp}${random}`;
+            document.getElementById('repairId').value = newID;
+            return newID;
+        }
+
+        window.onload = generateUniqueID;
+
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            
+            const btnT = document.getElementById('btn-track');
+            const btnR = document.getElementById('btn-register');
+            
+            if(tab === 'track') {
+                btnT.className = "flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 bg-white text-blue-700 shadow-md tracking-wider";
+                btnR.className = "flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 text-slate-600 tracking-wider";
+            } else {
+                btnR.className = "flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 bg-white text-blue-700 shadow-md tracking-wider";
+                btnT.className = "flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 text-slate-600 tracking-wider";
+                if(!document.getElementById('custName').value) generateUniqueID();
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
+
+        function showSuccessModal(id) {
+            document.getElementById('modalIdDisplay').innerText = id;
+            document.getElementById('successModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('successModal').classList.add('hidden');
+        }
+
+        async function fetchStatus() {
+            const id = document.getElementById('searchId').value;
+            if(!id) return showToast("Input Required");
+
+            const resultDiv = document.getElementById('searchResult');
+            const resultContent = document.getElementById('resultContent');
+            
+            showToast("Searching Database...");
+            
+            try {
+                const response = await fetch(`${SCRIPT_URL}?id=${id}&mobile=${id}`);
+                const data = await response.json();
+
+                resultDiv.classList.remove('hidden');
+                if(data.result === 'success') {
+                    resultContent.innerHTML = `
+                        <div class="flex flex-col md:flex-row justify-between items-start border-b border-slate-200 pb-6 mb-6">
+                            <div>
+                                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Customer Record</h4>
+                                <p class="text-2xl font-black text-slate-800">${data.data.name}</p>
+                            </div>
+                            <div class="mt-4 md:mt-0 text-right">
+                                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Service ID</h4>
+                                <p class="font-mono text-blue-600 font-black text-lg">${data.data.id}</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Equipment Details</h4>
+                                <p class="text-slate-800 font-bold text-lg">${data.data.model}</p>
+                            </div>
+                            <div class="bg-blue-600 p-5 rounded-2xl shadow-lg shadow-blue-100">
+                                <h4 class="text-[10px] font-black text-blue-200 uppercase tracking-widest mb-1">Live Status</h4>
+                                <p class="text-white font-black text-xl uppercase tracking-tighter">${data.data.status}</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    resultContent.innerHTML = `
+                        <div class="text-center py-6">
+                            <div class="bg-red-50 text-red-500 inline-block p-4 rounded-full mb-4">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"></path></svg>
+                            </div>
+                            <p class="text-slate-800 font-black uppercase tracking-wider italic">No Entry Found</p>
+                            <p class="text-slate-400 text-sm font-medium mt-1">Please verify the ID or contact support.</p>
+                        </div>`;
+                }
+            } catch (error) {
+                showToast("Server Connection Issue");
+            }
+        }
+
+        document.getElementById('regForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const mobileInput = document.getElementById('custMobile');
+            
+            // Final check for 10 digits
+            if(mobileInput.value.length !== 10) {
+                showToast("Mobile Number must be exactly 10 digits");
+                return;
+            }
+
+            const btn = e.target.querySelector('button');
+            btn.disabled = true;
+            btn.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg> PROCESSING...`;
+
+            const currentId = document.getElementById('repairId').value;
+            const payload = {
+                action: 'register',
+                id: currentId,
+                name: document.getElementById('custName').value,
+                mobile: mobileInput.value,
+                model: document.getElementById('machineModel').value,
+                problem: document.getElementById('problem').value
+            };
+
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', 
+                    body: JSON.stringify(payload)
+                });
+                
+                showSuccessModal(currentId);
+                e.target.reset();
+                generateUniqueID(); 
+            } catch (error) {
+                showToast("Operation Failed");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Confirm Registration";
+            }
+        };
+    </script>
+</body>
+</html>
