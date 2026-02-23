@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CareTech | BP Monitor Service Portal</title>
+    <title>CareTech | Medical Device Service Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -34,7 +34,7 @@
                     <h1 class="text-2xl font-extrabold tracking-tight uppercase">CareTech Repair Services</h1>
                     <p class="text-xs font-medium opacity-80 uppercase tracking-widest flex items-center">
                         <span class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
-                        Precision BP Monitor Repair
+                        Expert Medical Device Care
                     </p>
                 </div>
             </div>
@@ -48,11 +48,11 @@
         
         <!-- Tab Navigation -->
         <div class="flex p-1.5 bg-slate-200 rounded-2xl mb-10 max-w-sm mx-auto shadow-inner">
-            <button onclick="showTab('track')" id="btn-track" class="flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 bg-white text-blue-700 shadow-md tracking-wider">
-                TRACK STATUS
+            <button onclick="showTab('track')" id="btn-track" class="flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 bg-white text-blue-700 shadow-md tracking-wider text-center uppercase">
+                Track Status
             </button>
-            <button onclick="showTab('register')" id="btn-register" class="flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 text-slate-600 tracking-wider">
-                NEW REPAIR
+            <button onclick="showTab('register')" id="btn-register" class="flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 text-slate-600 tracking-wider text-center uppercase">
+                New Repair
             </button>
         </div>
 
@@ -67,12 +67,12 @@
                     
                     <div class="flex flex-col sm:flex-row gap-4">
                         <div class="relative flex-1">
-                            <input type="text" id="searchId" placeholder="ID (e.g. BP-XXXXXX)" 
+                            <input type="text" id="searchId" placeholder="ID (e.g. BP-XXXXXX / NB-XXXXXX)" 
                                    class="w-full pl-5 pr-5 py-4 border border-slate-300 rounded-2xl input-focus font-semibold text-slate-700 placeholder:text-slate-400 bg-slate-50/50">
                         </div>
                         <button onclick="fetchStatus()" 
                                 class="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-bold transition-all transform active:scale-95 shadow-lg shadow-blue-200 uppercase tracking-wide">
-                            Track Now
+                            Trace Data
                         </button>
                     </div>
 
@@ -89,32 +89,51 @@
                 <div class="p-8 md:p-12">
                     <div class="mb-10">
                         <h2 class="text-2xl font-bold text-slate-800 text-center sm:text-left uppercase tracking-tight">Register New Device</h2>
-                        <p class="text-slate-500 text-sm mt-1 text-center sm:text-left">Fill in the technical and customer details below.</p>
+                        <p class="text-slate-500 text-sm mt-1 text-center sm:text-left">Select device category and fill customer details.</p>
                     </div>
 
                     <form id="regForm" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Updated Device Category Dropdown with OTH -->
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Customer Full Name</label>
-                            <input type="text" id="custName" required placeholder="Full Name" 
-                                   class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl input-focus font-medium">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Device Category</label>
+                            <select id="deviceCategory" onchange="generateUniqueID()" 
+                                    class="w-full p-4 bg-white border border-slate-300 rounded-2xl input-focus font-bold text-slate-700 cursor-pointer shadow-sm">
+                                <option value="BP" selected>BP Monitor</option>
+                                <option value="NB">Nebulizer</option>
+                                <option value="OX">Oximeter</option>
+                                <option value="OTH">Other Medical Machine</option>
+                            </select>
                         </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Contact Number</label>
-                            <!-- Restricted to 10 digits -->
-                            <input type="number" id="custMobile" required placeholder="10 Digit Number" 
-                                   oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"
-                                   class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl input-focus font-medium">
-                        </div>
+
                         <div class="space-y-2">
                             <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Service ID (Auto)</label>
                             <input type="text" id="repairId" readonly 
                                    class="w-full p-4 bg-blue-50 border border-blue-100 rounded-2xl font-mono font-bold text-blue-700 text-lg">
                         </div>
+
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Device Model</label>
-                            <input type="text" id="machineModel" required placeholder="Model/Brand Name" 
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Customer Full Name</label>
+                            <input type="text" id="custName" required placeholder="Full Name" 
                                    class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl input-focus font-medium">
                         </div>
+
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Contact Number</label>
+                            <input type="number" id="custMobile" required placeholder="10 Digit Number" 
+                                   oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"
+                                   class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl input-focus font-medium">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Device Model</label>
+                            <input type="text" id="machineModel" required placeholder="e.g. Omron M3 / Dr. Trust" 
+                                   class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl input-focus font-medium">
+                        </div>
+
+                        <div class="md:col-span-1 space-y-2">
+                            <!-- Placeholder -->
+                        </div>
+
                         <div class="md:col-span-2 space-y-2">
                             <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Fault Description</label>
                             <textarea id="problem" rows="3" required placeholder="Describe the technical issue..." 
@@ -161,10 +180,11 @@
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxEAqcoW12GHjEDiFeE4vQTuA1YuXv0g5tQtchR5lqVkn8GMzmmHkA2G7Cg224C8pKz/exec";
 
         function generateUniqueID() {
+            const prefix = document.getElementById('deviceCategory').value;
             const date = new Date();
             const timestamp = date.getTime().toString().slice(-6);
             const random = Math.floor(Math.random() * 90) + 10;
-            const newID = `BP-${timestamp}${random}`;
+            const newID = `${prefix}-${timestamp}${random}`;
             document.getElementById('repairId').value = newID;
             return newID;
         }
@@ -179,11 +199,11 @@
             const btnR = document.getElementById('btn-register');
             
             if(tab === 'track') {
-                btnT.className = "flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 bg-white text-blue-700 shadow-md tracking-wider";
-                btnR.className = "flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 text-slate-600 tracking-wider";
+                btnT.className = "flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 bg-white text-blue-700 shadow-md tracking-wider text-center uppercase";
+                btnR.className = "flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 text-slate-600 tracking-wider text-center uppercase";
             } else {
-                btnR.className = "flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 bg-white text-blue-700 shadow-md tracking-wider";
-                btnT.className = "flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 text-slate-600 tracking-wider";
+                btnR.className = "flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 bg-white text-blue-700 shadow-md tracking-wider text-center uppercase";
+                btnT.className = "flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 text-slate-600 tracking-wider text-center uppercase";
                 if(!document.getElementById('custName').value) generateUniqueID();
             }
         }
@@ -260,7 +280,6 @@
             e.preventDefault();
             const mobileInput = document.getElementById('custMobile');
             
-            // Final check for 10 digits
             if(mobileInput.value.length !== 10) {
                 showToast("Mobile Number must be exactly 10 digits");
                 return;
