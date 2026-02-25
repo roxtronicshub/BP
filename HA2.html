@@ -1,0 +1,644 @@
+<!-- Version: Checkpoint-19 | Status: Tata Logo Black Fix, Print UI Fixed, Global Header Mirroring, Fixed Manual Add -->
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Automation Master Planner | Roxtronics Hub India</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --bg: #f1f5f9;
+            --text: #0f172a;
+            --border: #cbd5e1;
+        }
+        
+        * { box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text); 
+            padding: 10px; 
+            margin: 0;
+        }
+
+        .container { 
+            max-width: 1440px; 
+            margin: auto; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+        }
+
+        /* Tata Logo Black Filter */
+        .tata-logo-black { 
+            filter: brightness(0); 
+        }
+
+        /* Live Status Badge */
+        .live-status-badge {
+            display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px;
+            border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
+            text-transform: uppercase; transition: all 0.4s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .status-online { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .status-offline { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background-color: currentColor; position: relative; }
+        .status-online .pulse-dot::after {
+            content: ''; position: absolute; width: 100%; height: 100%; background-color: inherit;
+            border-radius: 50%; left: 0; top: 0; animation: statusPulse 1.8s infinite ease-in-out;
+        }
+        @keyframes statusPulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(2.8); opacity: 0; } }
+
+        /* Tabs Styling */
+        .tabs {
+            display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid var(--border);
+            padding-bottom: 10px; overflow-x: auto; scrollbar-width: none;
+        }
+        .tab-btn {
+            padding: 10px 18px; border: none; background: #f1f5f9; border-radius: 8px;
+            cursor: pointer; font-weight: 600; transition: 0.3s; font-size: 14px; color: #64748b;
+            display: flex; align-items: center; gap: 8px; white-space: nowrap;
+        }
+        .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2); }
+
+        /* Header & Logo */
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 15px; }
+        .company-logo-area { display: flex; align-items: center; gap: 10px; }
+        .company-logo-area img { max-height: 45px; width: auto; }
+        .logo-divider { height: 30px; width: 2px; background-color: #cbd5e1; }
+        .partner-tag { font-size: 8px; color: #64748b; font-weight: bold; text-transform: uppercase; }
+        .quotation-title { text-align: right; flex-grow: 1; }
+        .quotation-title h1 { margin: 0; color: var(--primary); font-size: 26px; text-transform: uppercase; }
+
+        .search-box-container { display: flex; gap: 5px; margin-top: 10px; justify-content: flex-end; width: 100%; }
+        .search-input { padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; width: 100%; max-width: 240px; }
+
+        /* Dashboard Global */
+        .project-info { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+            gap: 15px; margin-bottom: 25px; padding: 15px; background: #f8fafc; 
+            border-radius: 12px; border: 1px solid var(--border); 
+        }
+        .info-group label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 11px; color: #64748b; text-transform: uppercase; }
+        .info-group input { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; }
+        .display-label { padding: 8px 0; font-weight: 700; color: var(--text); font-size: 15px; min-height: 35px; display: flex; align-items: center; }
+
+        /* Registration Tab Styling */
+        .customer-form-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 20px; margin-bottom: 25px; padding: 20px; background: #f8fafc; 
+            border-radius: 12px; border: 1px solid var(--border); 
+        }
+        .category-group { 
+            display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px; 
+            background: white; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; 
+        }
+        .radio-item { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 14px; }
+        .radio-item input { width: 18px; height: 18px; accent-color: var(--primary); margin: 0; }
+
+        /* Room Cards */
+        .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; margin-top: 20px; }
+        .room-card { 
+            border: 1px solid var(--border); border-radius: 12px; background: white; 
+            overflow: hidden; display: flex; flex-direction: column; transition: all 0.3s ease; 
+            border-top: 4px solid #334155; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .room-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
+        .room-card-header { background: #f8fafc; color: #334155; padding: 12px 15px; font-weight: 700; display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; }
+        .room-card-body { padding: 15px; flex-grow: 1; }
+        .room-card-footer { padding: 12px; background: #f8fafc; border-top: 1px solid #f1f5f9; font-size: 14px; font-weight: 600; color: var(--primary); }
+
+        .add-device-ui { margin-top: 15px; background: #f1f5f9; padding: 12px; border-radius: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .add-device-ui select, .add-device-ui input { width: 100%; font-size: 12px; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; }
+
+        /* Table UI Fix */
+        .table-container { 
+            overflow-x: auto; margin-top: 10px; border-radius: 10px; border: 1px solid var(--border); 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        table { width: 100%; border-collapse: collapse; min-width: 1200px; table-layout: fixed; }
+        th { background-color: #334155; color: white; text-align: left; padding: 14px 10px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { padding: 6px 10px; border-bottom: 1px solid #f1f5f9; font-size: 13px; vertical-align: middle; position: relative; }
+        
+        /* Clean Inputs inside Table */
+        table .row-input {
+            width: 100%; padding: 8px 4px; border: 1px solid transparent; border-radius: 4px;
+            font-size: 12.5px; background: transparent; transition: all 0.2s;
+        }
+        table .row-input:hover { border-color: var(--border); background: #fff; }
+        table .row-input:focus { outline: none; border-color: var(--primary); background: #fff; }
+
+        /* Specific Column Widths */
+        th:nth-child(1) { width: 45px; } th:nth-child(2) { width: 130px; } th:nth-child(3) { width: 150px; }
+        th:nth-child(4) { width: 280px; } th:nth-child(5) { width: 90px; } th:nth-child(6) { width: 60px; }
+        th:nth-child(7) { width: 90px; } th:nth-child(8) { width: 70px; } th:nth-child(9) { width: 90px; }
+        th:nth-child(10) { width: 100px; } th:nth-child(11) { width: 60px; } th:nth-child(12) { width: 100px; }
+        th:nth-child(13) { width: 120px; } th:nth-child(14) { width: 40px; }
+
+        .grand-total-section { margin-top: 25px; padding: 24px; background: #1e293b; color: white; border-radius: 12px; display: flex; justify-content: flex-end; gap: 30px; flex-wrap: wrap; }
+        .total-box h3 { margin: 0; font-size: 12px; color: #94a3b8; text-transform: uppercase; }
+        .total-box p { margin: 5px 0 0 0; font-size: 20px; font-weight: 700; }
+
+        .actions { margin-top: 30px; display: flex; gap: 12px; flex-wrap: wrap; }
+        .btn { padding: 12px 24px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; display: inline-flex; align-items: center; gap: 10px; font-size: 14px; justify-content: center; transition: all 0.3s ease; }
+        .btn-add { background-color: var(--primary); color: white; }
+        .btn-save { background-color: #f59e0b; color: white; }
+        .btn-reset { background-color: #94a3b8; color: white; }
+        .btn-print { background-color: #334155; color: white; flex-grow: 1; }
+
+        /* Mirror styling for Printing */
+        .val-mirror, .terms-print-mirror { display: none; font-size: 14px; white-space: pre-wrap; color: #000; font-weight: 600; line-height: 1.4; }
+
+        @media (max-width: 1024px) {
+            .container { padding: 15px; }
+            .project-info { grid-template-columns: 1fr 1fr; }
+            .actions .btn { width: 100%; }
+        }
+
+        /* Room popup Grid fix */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px; backdrop-filter: blur(4px); }
+        .modal-content { background: white; padding: 30px; border-radius: 16px; width: 100%; max-width: 440px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+        .multiplier-grid { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; max-height: 60vh; overflow-y: auto; }
+        .multiplier-row { display: grid; grid-template-columns: 1fr 80px; align-items: center; padding: 10px 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .multiplier-row input { padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; text-align: center; font-weight: bold; width: 60px; justify-self: end; }
+
+        @media print {
+            .no-print, .tabs, .search-box-container, .header-status, .add-row-container, .btn-add { display: none !important; }
+            body { background: white !important; padding: 0 !important; }
+            .container { box-shadow: none !important; border: none !important; padding: 0 !important; max-width: 100% !important; margin: 0 !important; }
+            .project-info { display: grid !important; grid-template-columns: 1fr 1fr !important; border: 1px solid #cbd5e1 !important; padding: 15px !important; margin-bottom: 20px !important; background: #f8fafc !important; }
+            .val-mirror { display: block !important; visibility: visible !important; }
+            .display-label, input, select, textarea, .tab-btn, .search-input { display: none !important; }
+            .table-container { overflow: visible !important; border: none !important; margin: 0 !important; width: 100% !important; }
+            table { width: 100% !important; min-width: 1px !important; border: 1px solid #cbd5e1 !important; table-layout: fixed !important; }
+            th, td { border: 1px solid #cbd5e1 !important; padding: 4px 6px !important; font-size: 8.5pt !important; color: #000 !important; word-wrap: break-word !important; }
+            th { background-color: #f1f5f9 !important; color: #000 !important; text-align: left !important; }
+            .grand-total-section { background: #1e293b !important; color: white !important; display: flex !important; justify-content: flex-end !important; margin-top: 15px !important; padding: 15px !important; }
+            .terms-print-mirror { display: block !important; margin-top: 15px; visibility: visible !important; }
+            .total-box p { color: white !important; }
+            #grandTotal { color: #10b981 !important; font-weight: bold !important; }
+            /* Ensure Tata Logo appears in print if needed, usually black filter is fine */
+            .tata-logo-black { filter: brightness(0) !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<!-- Success Modal -->
+<div id="successModal" class="modal-overlay">
+    <div class="modal-content" style="text-align: center;">
+        <div style="font-size: 60px; color: var(--secondary); margin-bottom: 20px;">✅</div>
+        <h2 id="successTitle" style="color: var(--text); margin-bottom: 12px; font-size: 24px;">Success!</h2>
+        <p id="successMsg" style="color: #64748b; margin-bottom: 30px; font-size: 15px; line-height: 1.5;">Quotation successfully saved.</p>
+        <button class="btn btn-add" style="width: 100%;" onclick="closeSuccessModal()">Done</button>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header-top">
+        <div class="logos-wrapper">
+            <div class="company-logo-area">
+                <!-- Added .tata-logo-black class here -->
+                <img src="https://www.tatapower.com/content/experience-fragments/tatapoweraemsitesprogram/in/en/tatapower/header/Header-ExpressoTheme/_jcr_content/root/container/navigation/image.coreimg.svg/1723030002763/tp-logo.svg" alt="Tata Power" class="tata-logo-black">
+                <div class="logo-divider"></div>
+                <div style="display: flex; flex-direction: column;">
+                    <span class="partner-tag">Channel Partner</span>
+                    <img src="https://roxtronicshub.github.io/rhi.png" alt="RHI Logo" style="max-height: 40px;">
+                </div>
+            </div>
+        </div>
+        <div class="quotation-title">
+            <h1>Planner Pro</h1>
+            <p style="margin:5px 0; color:#64748b; font-size: 13px;">Home Automation Solutions</p>
+        </div>
+    </div>
+
+    <!-- GLOBAL DASHBOARD: Persistent for Persistance and Print -->
+    <div class="project-info" id="globalDashboard">
+        <div class="info-group">
+            <label>Customer Name</label>
+            <input type="text" placeholder="Rahul Sharma" id="custName" oninput="mirrorProjectInfo(this)">
+            <div id="mirrorCustName" class="val-mirror"></div>
+        </div>
+        <div class="info-group">
+            <label>Site Address</label>
+            <input type="text" placeholder="Location" id="siteAddr" oninput="mirrorProjectInfo(this)">
+            <div id="mirrorSiteAddr" class="val-mirror"></div>
+        </div>
+        <div class="info-group">
+            <label>Quotation No.</label>
+            <div id="quotNo" class="display-label" style="color: var(--primary);">Loading...</div>
+            <div id="mirrorQuotNo" class="val-mirror"></div>
+        </div>
+        <div class="info-group">
+            <label>Date</label>
+            <div id="quotDate" class="display-label">Loading...</div>
+            <div id="mirrorDate" class="val-mirror"></div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="tabs no-print">
+        <button class="tab-btn active" onclick="switchTab('planner')">🛠 Room Planner</button>
+        <button class="tab-btn" onclick="switchTab('quotation')">📄 Quotation View</button>
+        <button class="tab-btn" onclick="switchTab('customer')">👤 Registration</button>
+    </div>
+
+    <!-- Live Badge -->
+    <div class="header-status no-print">
+        <div id="statusBadge" class="live-status-badge status-offline">
+            <span class="pulse-dot"></span>
+            <span id="syncStatus">Connecting...</span>
+        </div>
+        <button class="btn btn-add" style="padding: 10px 15px; font-size: 12px;" onclick="fetchLiveData()">🔄 Sync Master Data</button>
+    </div>
+
+    <!-- Search Tool -->
+    <div class="search-box-container no-print" id="searchContainer">
+        <input type="text" id="searchQuotInput" class="search-input" placeholder="Search Quot No (e.g. 001)">
+        <button class="btn btn-add" style="padding: 10px 15px;" onclick="searchQuotation()">🔍</button>
+    </div>
+
+    <!-- TAB: CUSTOMER REGISTRATION -->
+    <div id="customerTab" class="tab-content" style="display:none;">
+        <h2 style="color: var(--primary); font-size: 18px; margin-bottom: 20px;">👤 New Registration</h2>
+        <div class="customer-form-grid">
+            <div class="info-group" style="grid-column: 1 / -1;">
+                <label>Category</label>
+                <div class="category-group">
+                    <label class="radio-item"><input type="radio" name="custCategory" value="Individual" checked> Individual</label>
+                    <label class="radio-item"><input type="radio" name="custCategory" value="Builder"> Builder</label>
+                    <label class="radio-item"><input type="radio" name="custCategory" value="Architect"> Architect</label>
+                    <label class="radio-item"><input type="radio" name="custCategory" value="Designer"> Designer</label>
+                </div>
+            </div>
+            <div class="info-group"><label>Full Name</label><input type="text" id="regName" placeholder="Full Name"></div>
+            <div class="info-group"><label>Phone</label><input type="tel" id="regPhone" placeholder="Mobile No."></div>
+            <div class="info-group"><label>Email</label><input type="email" id="regEmail" placeholder="Email Address"></div>
+            <div class="info-group"><label>Address</label><input type="text" id="regAddr" placeholder="Street/Area"></div>
+        </div>
+        <div class="actions"><button class="btn btn-save" onclick="saveCustomerRegistration()">👤 Register & Save</button></div>
+    </div>
+
+    <!-- TAB: ROOM PLANNER -->
+    <div id="plannerTab" class="tab-content">
+        <div class="room-grid-header no-print" style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn btn-add" onclick="showRoomPopup()">+ Add Rooms / Site</button>
+            <button class="btn btn-reset" style="background:#64748b; color:white;" onclick="showCustomRoomPopup()">+ Add Other Room</button>
+        </div>
+        <div id="roomContainer" class="room-grid">
+            <div style="text-align: center; grid-column: 1/-1; padding: 40px; color: #94a3b8;">Buttons par click karke room plan karein.</div>
+        </div>
+    </div>
+
+    <!-- TAB: QUOTATION VIEW -->
+    <div id="quotationTab" class="tab-content" style="display:none;">
+        <div class="table-container">
+            <table id="mainTable">
+                <thead>
+                    <tr><th>#</th><th>Room Name</th><th>Series</th><th>Item & Description</th><th>HSN</th><th>Qty</th><th>MRP</th><th>Disc%</th><th>Base</th><th>Amt</th><th>GST%</th><th>GST Amt</th><th>Total</th><th class="no-print"></th></tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+        <div class="add-row-container no-print" style="margin-top: 15px;"><button class="btn btn-add" id="manualAddBtn" onclick="addRow()">+ Manually Add Line Item</button></div>
+        
+        <div class="grand-total-section">
+            <div class="total-box"><h3>Taxable Amt</h3><p id="totalBase">₹0.00</p></div>
+            <div class="total-box"><h3>Total GST</h3><p id="totalGST">₹0.00</p></div>
+            <div class="total-box" style="border-left: 2px solid #475569; padding-left: 20px;"><h3>Grand Total</h3><p id="grandTotal" style="color: #10b981;">₹0.00</p></div>
+        </div>
+        
+        <div class="quotation-footer">
+            <div class="terms-section">
+                <h4>Terms & Conditions</h4>
+                <textarea id="termsArea" oninput="syncTerms()">1. Prices valid for 15 days from the date of quotation. 2. 50% Advance with PO, balance before dispatch. 3. 1-year warranty on manufacturing defects.</textarea>
+                <div id="termsMirror" class="terms-print-mirror"></div>
+            </div>
+            <div class="signature-section" style="text-align: right;"><div style="font-weight: 700;">For Roxtronics Hub India</div><div class="signature-box" style="margin-left:auto;">Authorized Signatory</div></div>
+        </div>
+    </div>
+
+    <!-- Global Actions -->
+    <div class="actions no-print" id="footerActions">
+        <button class="btn btn-reset" onclick="resetApp()">🆕 New</button>
+        <button class="btn btn-save" onclick="saveQuotation()">💾 Save Cloud</button>
+        <button class="btn btn-print" onclick="window.print()">Download PDF</button>
+    </div>
+</div>
+
+<!-- Modals -->
+<div id="roomModal" class="modal-overlay">
+    <div class="modal-content">
+        <h2 style="font-size: 20px; color: var(--primary); margin-bottom: 15px; text-align: left;">🏗 Room Configuration</h2>
+        <div class="multiplier-grid" id="multiplierInputs"></div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px;">
+            <button class="btn btn-reset" onclick="closeRoomPopup()">Cancel</button>
+            <button class="btn btn-add" onclick="generateRoomCards()">Create Cards</button>
+        </div>
+    </div>
+</div>
+
+<div id="customRoomModal" class="modal-overlay">
+    <div class="modal-content">
+        <h2 style="font-size: 20px; color: var(--primary); margin-bottom: 15px; text-align: left;">✨ Add Other Room</h2>
+        <div class="info-group" style="text-align:left;"><label>Room Name</label><input type="text" id="customRoomName" placeholder="e.g. Gym, Office"></div>
+        <div class="info-group" style="text-align:left; margin-top:10px;"><label>Quantity</label><input type="number" id="customRoomCount" value="1" min="1"></div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+            <button class="btn btn-reset" onclick="closeCustomRoomPopup()">Cancel</button>
+            <button class="btn btn-add" onclick="addCustomRooms()">Add Rooms</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let deviceDatabase = {};
+    let plannedRooms = []; 
+    let manualItems = []; 
+    const roomsList = ["Living Room", "Master Bedroom", "Bedroom 2", "Kitchen", "Dining Area", "Bathroom", "Balcony", "Home Theatre"];
+    const inbuiltUrl = "https://script.google.com/macros/s/AKfycbw-Rba94kLqabkhEDAt9BHn9xG_AfwOr9urMe9PSfYifOAPl5wUGmvi2aMKxMmT5Ki5zg/exec";
+
+    function showToast(msg) { const t = document.getElementById('toast'); t.innerText = msg; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 3000); }
+    function openSuccessModal() { document.getElementById('successModal').style.display = 'flex'; }
+    function closeSuccessModal() { document.getElementById('successModal').style.display = 'none'; }
+
+    // --- DASHBOARD MIRRORING ---
+    function mirrorProjectInfo(el) { 
+        const mirrorId = el.id === 'custName' ? 'mirrorCustName' : 'mirrorSiteAddr';
+        const m = document.getElementById(mirrorId);
+        if (m) m.innerText = el.value; 
+    }
+
+    function updateLabelMirrors() {
+        const qNo = document.getElementById('quotNo').innerText;
+        const qDate = document.getElementById('quotDate').innerText;
+        document.getElementById('mirrorQuotNo').innerText = qNo;
+        document.getElementById('mirrorDate').innerText = qDate;
+    }
+
+    // --- CUSTOMER REGISTRATION ---
+    async function saveCustomerRegistration() {
+        const payload = { action: "registerCustomer", customerType: document.querySelector('input[name="custCategory"]:checked').value, name: document.getElementById('regName').value, phone: document.getElementById('regPhone').value, email: document.getElementById('regEmail').value, addr: document.getElementById('regAddr').value };
+        if (!payload.name || !payload.phone) return showToast("Name/Phone required!");
+        showToast("Saving...");
+        try { 
+            await fetch(inbuiltUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }); 
+            openSuccessModal(); 
+            ['regName', 'regPhone', 'regEmail', 'regAddr'].forEach(id => document.getElementById(id).value = "");
+        } catch (e) { showToast("Error!"); }
+    }
+
+    function resetApp() {
+        plannedRooms = []; manualItems = [];
+        document.getElementById('custName').value = ""; document.getElementById('siteAddr').value = "";
+        document.getElementById('mirrorCustName').innerText = ""; document.getElementById('mirrorSiteAddr').innerText = "";
+        updateAutomaticFields(); renderRoomCards(); syncPlannerToQuotation(); switchTab('planner');
+        showToast("System Reset!");
+    }
+
+    function updateAutomaticFields() {
+        const d = new Date();
+        const dateStr = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+        document.getElementById('quotDate').innerText = dateStr;
+        document.getElementById('mirrorDate').innerText = dateStr;
+        fetchNextQuotNo();
+    }
+
+    async function fetchNextQuotNo() {
+        try {
+            const res = await fetch(`${inbuiltUrl}?action=getNextQuotNo`);
+            const data = await res.json();
+            if (data && data.nextQuotNo) {
+                document.getElementById('quotNo').innerText = data.nextQuotNo;
+                updateLabelMirrors();
+            }
+        } catch (e) { document.getElementById('quotNo').innerText = "Sync Error"; }
+    }
+
+    async function fetchLiveData() {
+        updateStatusBadge('offline', 'Syncing...');
+        try {
+            const res = await fetch(inbuiltUrl + "?t=" + Date.now()); 
+            const data = await res.json();
+            if (data && Object.keys(data).length > 0) {
+                deviceDatabase = data; updateStatusBadge('online', 'Live Connected');
+                renderRoomCards(); showToast("Data Synced!");
+            }
+        } catch (error) { updateStatusBadge('offline', 'Failed'); }
+    }
+
+    function updateStatusBadge(status, text) {
+        const badge = document.getElementById('statusBadge');
+        badge.className = 'live-status-badge ' + (status === 'online' ? 'status-online' : 'status-offline');
+        document.getElementById('syncStatus').innerText = text;
+    }
+
+    async function searchQuotation() {
+        const searchVal = document.getElementById('searchQuotInput').value;
+        if (!searchVal) return;
+        showToast("Searching...");
+        try {
+            const res = await fetch(`${inbuiltUrl}?action=getQuotation&quotNo=${searchVal}`);
+            const result = await res.json();
+            if (result && result.status === "success") {
+                const data = result.data;
+                document.getElementById('custName').value = data.custName;
+                document.getElementById('siteAddr').value = data.siteAddr;
+                document.getElementById('quotNo').innerText = data.quotNo;
+                document.getElementById('quotDate').innerText = data.date;
+                document.getElementById('mirrorCustName').innerText = data.custName;
+                document.getElementById('mirrorSiteAddr').innerText = data.siteAddr;
+                document.getElementById('mirrorQuotNo').innerText = data.quotNo;
+                document.getElementById('mirrorDate').innerText = data.date;
+                document.getElementById('termsArea').value = data.terms;
+                plannedRooms = data.plannedRooms; manualItems = data.manualItems;
+                renderRoomCards(); syncPlannerToQuotation(); syncTerms();
+                showToast("Loaded!");
+            } else { showToast("Not Found!"); }
+        } catch (e) { showToast("Search Error!"); }
+    }
+
+    async function saveQuotation() {
+        if (document.getElementById('quotationTab').style.display === 'block') saveManualEntriesToMemory();
+        const qNo = document.getElementById('quotNo').innerText;
+        if (qNo.includes("Loading")) return;
+        const payload = { action: "saveQuotation", quotNo: qNo, custName: document.getElementById('custName').value, siteAddr: document.getElementById('siteAddr').value, date: document.getElementById('quotDate').innerText, plannedRooms: plannedRooms, manualItems: manualItems, grandTotal: document.getElementById('grandTotal').innerText, terms: document.getElementById('termsArea').value };
+        try { await fetch(inbuiltUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }); openSuccessModal(); resetApp(); } catch (e) { showToast("Error!"); }
+    }
+
+    function switchTab(tab) {
+        if (tab !== 'quotation') saveManualEntriesToMemory();
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+        const targetBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.innerText.toLowerCase().includes(tab));
+        if (targetBtn) targetBtn.classList.add('active');
+        document.getElementById(tab + 'Tab').style.display = 'block';
+        document.getElementById('searchContainer').style.display = (tab === 'customer') ? 'none' : 'flex';
+        if (tab === 'quotation') syncPlannerToQuotation();
+    }
+
+    function renderRoomCards() {
+        const container = document.getElementById('roomContainer');
+        if (plannedRooms.length === 0) { container.innerHTML = `<div style="text-align:center;grid-column:1/-1;padding:40px;color:#94a3b8;">Buttons par click karke room plan karein.</div>`; return; }
+        container.innerHTML = plannedRooms.map((room, idx) => {
+            const seriesOpts = Object.keys(deviceDatabase).map(s => `<option value="${s}">${s}</option>`).join('');
+            return `
+            <div class="room-card">
+                <div class="room-card-header"><span>${room.name}</span><button style="background:none;color:#ef4444;border:none;cursor:pointer;" onclick="deleteRoom(${idx})">✖</button></div>
+                <div class="room-card-body">
+                    <ul class="device-list">${room.devices.map((d, dIdx) => `<li class="device-item"><span>${d.item} <b>x${d.qty}</b></span><span class="no-print" style="cursor:pointer;color:red;" onclick="removeDevice(${idx}, ${dIdx})">🗑</span></li>`).join('')}</ul>
+                    <div class="add-device-ui no-print">
+                        <select class="room-series-select-${idx}" onchange="updateRoomCardItems(${idx})"><option value="">Series...</option>${seriesOpts}</select>
+                        <select class="room-item-select-${idx}"><option value="">Item...</option></select>
+                        <input type="number" class="room-qty-input-${idx}" value="1" min="1">
+                        <button class="btn btn-add" style="padding:8px;grid-column:span 2;" onclick="addDeviceToRoom(${idx})">Add Device</button>
+                    </div>
+                </div>
+                <div class="room-card-footer">Subtotal: ₹${calculateRoomTotal(room).toLocaleString()}</div>
+            </div>`;
+        }).join('');
+    }
+
+    function updateRoomCardItems(idx) {
+        const sSel = document.querySelector(`.room-series-select-${idx}`), iSel = document.querySelector(`.room-item-select-${idx}`);
+        iSel.innerHTML = '<option value="">Item...</option>';
+        if (sSel.value && deviceDatabase[sSel.value]) deviceDatabase[sSel.value].forEach(p => { const o = document.createElement('option'); o.value = p.item; o.textContent = p.item; iSel.appendChild(o); });
+    }
+
+    function addDeviceToRoom(idx) {
+        const sSel = document.querySelector(`.room-series-select-${idx}`), iSel = document.querySelector(`.room-item-select-${idx}`), qInp = document.querySelector(`.room-qty-input-${idx}`);
+        if (!sSel.value || !iSel.value) return showToast("Select Product!");
+        const p = deviceDatabase[sSel.value].find(x => x.item === iSel.value);
+        plannedRooms[idx].devices.push({ series: sSel.value, item: iSel.value, hsn: p.hsn, mrp: p.mrp, discount: p.discount||0, gst: p.gst||18, qty: parseInt(qInp.value)||1 });
+        renderRoomCards();
+    }
+
+    function deleteRoom(idx) { plannedRooms.splice(idx, 1); renderRoomCards(); }
+    function removeDevice(r, d) { plannedRooms[r].devices.splice(d, 1); renderRoomCards(); }
+    function calculateRoomTotal(room) { return room.devices.reduce((acc, d) => { const disc = d.discount > 0 && d.discount < 1 ? d.discount * 100 : d.discount; const base = d.mrp - (d.mrp * (disc / 100)); const gst = d.gst > 0 && d.gst < 1 ? d.gst * 100 : d.gst; return acc + ((base + (base * (gst / 100))) * d.qty); }, 0); }
+
+    function syncPlannerToQuotation() {
+        const tbody = document.getElementById('tableBody'); tbody.innerHTML = "";
+        plannedRooms.forEach(room => {
+            room.devices.forEach(d => {
+                const tr = document.createElement('tr');
+                const disc = d.discount > 0 && d.discount < 1 ? d.discount * 100 : d.discount;
+                const gst = d.gst > 0 && d.gst < 1 ? d.gst * 100 : d.gst;
+                tr.innerHTML = `<td class="row-index"></td>
+                <td><div class="val-mirror">${room.name}</div><input type="text" class="row-input" value="${room.name}" readonly></td>
+                <td><div class="val-mirror">${d.series}</div><input type="text" class="row-input" value="${d.series}" readonly></td>
+                <td><div class="val-mirror">${d.item}</div><input type="text" class="row-input" value="${d.item}" readonly></td>
+                <td><div class="val-mirror">${d.hsn}</div><input type="text" class="row-input hsn-code" value="${d.hsn}" oninput="updateTableCalc(this)"></td>
+                <td><div class="val-mirror">${d.qty}</div><input type="number" class="row-input qty" value="${d.qty}" oninput="updateTableCalc(this)"></td>
+                <td><div class="val-mirror">${d.mrp}</div><input type="number" class="row-input mrp" value="${d.mrp}" oninput="updateTableCalc(this)"></td>
+                <td><div class="val-mirror">${disc.toFixed(2)}</div><input type="number" class="row-input disc" value="${disc.toFixed(2)}" oninput="updateTableCalc(this)"></td>
+                <td><div class="val-mirror">0.00</div><input type="text" class="row-input base-rate" readonly value="0.00"></td>
+                <td><div class="val-mirror">0.00</div><input type="text" class="row-input amount" readonly value="0.00"></td>
+                <td><div class="val-mirror">${gst.toFixed(2)}</div><input type="number" class="row-input gst-perc" value="${gst.toFixed(2)}" oninput="updateTableCalc(this)"></td>
+                <td><div class="val-mirror">0.00</div><input type="text" class="row-input gst-amt" readonly value="0.00"></td>
+                <td><div class="val-mirror">0.00</div><input type="text" class="row-input row-total" readonly value="0.00" style="color:var(--primary); font-weight:bold;"></td>
+                <td class="no-print" style="text-align:center;">🔒</td>`;
+                tbody.appendChild(tr); updateTableCalc(tr.querySelector('.qty'));
+            });
+        });
+        manualItems.forEach(m => addManualRow(m)); updateIndices();
+    }
+
+    function addRow() { addManualRow(); updateIndices(); }
+    function addManualRow(data = null) {
+        const tbody = document.getElementById('tableBody');
+        const tr = document.createElement('tr'); tr.className = 'is-manual';
+        const sOpts = Object.keys(deviceDatabase).map(s => `<option value="${s}" ${data&&data.series===s?'selected':''}>${s}</option>`).join('');
+        tr.innerHTML = `<td class="row-index"></td>
+        <td><div class="val-mirror">${data?data.room:'Manual'}</div><input type="text" class="row-input room-input" value="${data?data.room:'Manual'}" oninput="updateTableCalc(this)"></td>
+        <td><div class="val-mirror"></div><select class="row-input series-select" onchange="updateItems(this)"><option value="">Series...</option>${sOpts}</select></td>
+        <td><div class="val-mirror"></div><select class="row-input item-select" onchange="autoFillDetails(this)"><option value="">Item...</option></select></td>
+        <td><div class="val-mirror">${data?data.hsn:''}</div><input type="text" class="row-input hsn-code" value="${data?data.hsn:''}" oninput="updateTableCalc(this)"></td>
+        <td><div class="val-mirror">1</div><input type="number" class="row-input qty" value="${data?data.qty:'1'}" oninput="updateTableCalc(this)"></td>
+        <td><div class="val-mirror">0</div><input type="number" class="row-input mrp" value="${data?data.mrp:'0'}" oninput="updateTableCalc(this)"></td>
+        <td><div class="val-mirror">0</div><input type="number" class="row-input disc" value="${data?data.disc:'0'}" oninput="updateTableCalc(this)"></td>
+        <td><div class="val-mirror">0</div><input type="text" class="row-input base-rate" readonly value="0.00"></td>
+        <td><div class="val-mirror">0</div><input type="text" class="row-input amount" readonly value="0.00"></td>
+        <td><div class="val-mirror">18</div><input type="number" class="row-input gst-perc" value="${data?data.gst:'18'}" oninput="updateTableCalc(this)"></td>
+        <td><div class="val-mirror">0</div><input type="text" class="row-input gst-amt" readonly value="0.00"></td>
+        <td><div class="val-mirror">0</div><input type="text" class="row-input row-total" readonly value="0.00" style="color:var(--primary); font-weight:bold;"></td>
+        <td class="no-print"><button style="color:red;background:none;border:none;cursor:pointer;" onclick="this.closest('tr').remove();calculateGrandTotal();updateIndices();">✕</button></td>`;
+        tbody.appendChild(tr); if (data) { updateItems(tr.querySelector('.series-select')); tr.querySelector('.item-select').value = data.item; updateTableCalc(tr.querySelector('.qty')); }
+    }
+
+    function updateItems(el) {
+        const itSel = el.closest('tr').querySelector('.item-select'); itSel.innerHTML = '<option value="">Select...</option>';
+        if (el.value && deviceDatabase[el.value]) deviceDatabase[el.value].forEach(p => { const o = document.createElement('option'); o.value = p.item; o.textContent = p.item; itSel.appendChild(o); });
+        updateTableCalc(el);
+    }
+
+    function autoFillDetails(el) {
+        const tr = el.closest('tr'), s = tr.querySelector('.series-select').value;
+        if (s && el.value) {
+            const p = deviceDatabase[s].find(x => x.item === el.value);
+            tr.querySelector('.hsn-code').value = p.hsn || ""; tr.querySelector('.mrp').value = p.mrp || 0;
+            let d = p.discount||0; if(d>0 && d<1) d*=100;
+            let g = p.gst||18; if(g>0 && g<1) g*=100;
+            tr.querySelector('.disc').value = d.toFixed(2); tr.querySelector('.gst-perc').value = g.toFixed(2);
+        }
+        updateTableCalc(el);
+    }
+
+    function updateTableCalc(inp) {
+        const tr = inp.closest('tr'), q = parseFloat(tr.querySelector('.qty').value)||0, mrp = parseFloat(tr.querySelector('.mrp').value)||0, d = parseFloat(tr.querySelector('.disc').value)||0, gp = parseFloat(tr.querySelector('.gst-perc').value)||0;
+        const b = mrp - (mrp*(d/100)), a = b*q, ga = a*(gp/100);
+        tr.querySelector('.base-rate').value = b.toFixed(2); tr.querySelector('.amount').value = a.toFixed(2); tr.querySelector('.gst-amt').value = ga.toFixed(2); tr.querySelector('.row-total').value = (a+ga).toFixed(2);
+        
+        // Sync mirrors for printing
+        tr.querySelectorAll('.row-input').forEach(el => {
+            const m = el.parentElement.querySelector('.val-mirror');
+            if(m) {
+                if(el.tagName === 'SELECT') m.innerText = el.options[el.selectedIndex]?.text || "";
+                else m.innerText = el.value;
+            }
+        });
+        calculateGrandTotal();
+    }
+
+    function calculateGrandTotal() {
+        let tb=0, tg=0, gt=0;
+        document.querySelectorAll('#tableBody tr').forEach(tr => { tb += parseFloat(tr.querySelector('.amount').value)||0; tg += parseFloat(tr.querySelector('.gst-amt').value)||0; gt += parseFloat(tr.querySelector('.row-total').value)||0; });
+        document.getElementById('totalBase').innerText = `₹${tb.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+        document.getElementById('totalGST').innerText = `₹${tg.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+        document.getElementById('grandTotal').innerText = `₹${gt.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+    }
+
+    function updateIndices() { document.querySelectorAll('.row-index').forEach((el, idx) => el.innerText = idx + 1); }
+    function showRoomPopup() { document.getElementById('multiplierInputs').innerHTML = roomsList.map(r => `<div class="multiplier-row"><label>${r}</label><input type="number" data-room="${r}" value="0" min="0"></div>`).join(''); document.getElementById('roomModal').style.display = 'flex'; }
+    function closeRoomPopup() { document.getElementById('roomModal').style.display = 'none'; }
+    function showCustomRoomPopup() { document.getElementById('customRoomName').value = ""; document.getElementById('customRoomModal').style.display = 'flex'; }
+    function closeCustomRoomPopup() { document.getElementById('customRoomModal').style.display = 'none'; }
+    function addCustomRooms() { const n = document.getElementById('customRoomName').value.trim(), c = parseInt(document.getElementById('customRoomCount').value)||0; if(n && c>0) { createRoomLogic(n, c); closeCustomRoomPopup(); renderRoomCards(); } }
+    function createRoomLogic(t, q) { const e = plannedRooms.filter(r => r.name.startsWith(t)).length + 1; for(let i=0; i<q; i++) plannedRooms.push({ id: Date.now()+Math.random(), name: `${t} ${e+i}`, devices: [] }); }
+    function generateRoomCards() { document.querySelectorAll('#multiplierInputs input').forEach(inp => { if(parseInt(inp.value)>0) createRoomLogic(inp.getAttribute('data-room'), parseInt(inp.value)); }); closeRoomPopup(); renderRoomCards(); }
+    
+    function syncTerms() { 
+        const area = document.getElementById('termsArea');
+        if(area) document.getElementById('termsMirror').innerText = area.value; 
+    }
+
+    function saveManualEntriesToMemory() { 
+        manualItems = []; 
+        document.querySelectorAll('#tableBody tr.is-manual').forEach(row => { 
+            const sSel = row.querySelector('.series-select'), iSel = row.querySelector('.item-select');
+            manualItems.push({ room: row.querySelector('.room-input').value, series: sSel?sSel.value:"", item: iSel?iSel.value:"", hsn: row.querySelector('.hsn-code').value, qty: row.querySelector('.qty').value, mrp: row.querySelector('.mrp').value, disc: row.querySelector('.disc').value, gst: row.querySelector('.gst-perc').value }); 
+        }); 
+    }
+
+    window.onload = function() { updateAutomaticFields(); fetchLiveData(); syncTerms(); document.querySelectorAll('#globalDashboard input').forEach(mirrorProjectInfo); };
+</script>
+</body>
+</html>
