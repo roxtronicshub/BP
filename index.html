@@ -1,779 +1,325 @@
-<!-- Version: Checkpoint-42 | Status: Optimized Print Font Size, Flashing Live Badge, Improved Button Alignment, Premium EZ Theme -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planner Pro | Roxtronics Hub India</title>
+    <title>CareTech | Medical Device Service Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --ez-dark: #1a1a1a;
-            --ez-brown: #2b1d10;
-            --ez-gold: #e0b440;
-            --ez-gold-hover: #c99d35;
-            --ez-bg: #ffffff;
-            --ez-light-bg: #fdfaf5;
-            --text-dark: #1f2937;
-            --text-muted: #6b7280;
-            --border: #e5e7eb;
-        }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body { 
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
-            background-color: var(--ez-light-bg); 
-            color: var(--text-dark); 
-            line-height: 1.6;
-        }
-
-        /* --- LOGIN OVERLAY --- */
-        #loginOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
-                        url('https://www.tatapower.com/adobe/dynamicmedia/deliver/dm-p-oid--xoiKJFyY4kqwBXocriZrmRglbhyjMgNeoZG4whF-Uwqc6SeZ3aId4MAsoG1dIYcIiD8dvMjbJ8llE1LajGkYwSzM0y-wbtrjI7WTSWvGcAFz4EpnxaWSADzROQDEiSut/ez-home-web.webp?quality=85&preferwebp=true&width=1440');
-            background-size: cover; background-position: center;
-            display: flex; justify-content: center; align-items: center;
-            z-index: 5000;
-        }
-        .login-card {
-            background: rgba(255, 255, 255, 0.98); padding: 50px 40px; border-radius: 4px;
-            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.4); width: 90%; max-width: 440px; text-align: center;
-        }
-        .login-card h2 { color: var(--ez-brown); font-size: 28px; margin-bottom: 10px; font-weight: 800; letter-spacing: -0.5px; }
-        .login-card input { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 4px; font-size: 15px; text-align: center; outline: none; }
-        .login-card button { 
-            width: 100%; padding: 15px; border: none; background: var(--ez-brown); color: white; 
-            font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;
-        }
-        .login-card button:hover { background: var(--ez-gold); color: var(--ez-brown); }
-
-        /* --- GLOBAL LAYOUT --- */
-        .container { 
-            max-width: 1360px; margin: 30px auto; background: white; 
-            padding: 40px; border-radius: 4px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); 
-            display: none; border-top: 6px solid var(--ez-brown);
-        }
-
-        /* --- HEADER --- */
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
-        .company-logo-area { display: flex; align-items: center; gap: 15px; }
-        .company-logo-area img { max-height: 50px; }
-        .tata-logo-black { filter: brightness(0); }
-        .logo-divider { height: 40px; width: 1px; background-color: var(--border); }
-        .partner-tag { font-size: 9px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        .quotation-title { text-align: right; }
-        .quotation-title h1 { color: var(--ez-brown); font-size: 32px; font-weight: 900; letter-spacing: -1px; display: flex; align-items: center; justify-content: flex-end; }
-
-        /* --- BUTTONS --- */
-        .btn { 
-            padding: 10px 22px; border: 1px solid var(--ez-brown); background: transparent; 
-            color: var(--ez-brown); font-weight: 700; cursor: pointer; transition: 0.3s; 
-            font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 8px;
-            border-radius: 2px; height: 40px; outline: none;
-        }
-        .btn:hover { background: var(--ez-gold); border-color: var(--ez-gold); color: white; }
-        .btn-solid { background: var(--ez-brown); color: white; border: none; }
-        .btn-solid:hover { background: var(--ez-gold); color: var(--ez-brown); }
-        .btn-logout { background: #ef4444; color: white; border: none; font-size: 10px; padding: 5px 10px; margin-left: 15px; height: auto; border-radius: 2px; }
-
-        /* --- DASHBOARD --- */
-        .project-info { 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
-            gap: 25px; margin-bottom: 40px; padding: 25px; background: var(--ez-light-bg); 
-            border: 1px solid var(--border);
-        }
-        .info-group label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 11px; color: var(--ez-brown); text-transform: uppercase; letter-spacing: 0.5px; }
-        .info-group input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 2px; font-size: 14px; background: white; outline: none; }
-        .display-label { padding: 5px 0; font-weight: 800; color: var(--ez-brown); font-size: 18px; }
-
-        /* --- TABS --- */
-        .tabs { display: flex; gap: 30px; margin-bottom: 30px; border-bottom: 1px solid var(--border); }
-        .tab-btn {
-            padding: 15px 5px; border: none; background: none; 
-            cursor: pointer; font-weight: 700; transition: 0.3s; font-size: 13px; color: var(--text-muted);
-            text-transform: uppercase; letter-spacing: 0.5px; position: relative;
-        }
-        .tab-btn.active { color: var(--ez-brown); }
-        .tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 3px; background: var(--ez-gold); }
-
-        /* --- TOOLBARS --- */
-        .toolbar-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 15px; }
-        .toolbar-actions { display: flex; align-items: center; gap: 12px; }
-
-        /* --- LIVE STATUS BADGE WITH FLASHING DOT --- */
-        .live-status-badge {
-            display: inline-flex; align-items: center; gap: 10px;
-            background: #f3f4f6; border-radius: 50px; padding: 6px 16px;
-            font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted);
-            border: 1px solid #e5e7eb;
-        }
-        .status-online { background: #e7f9ef; color: #059669; border-color: #86efac; }
-        .status-dot {
-            height: 8px; width: 8px; background-color: #10b981; border-radius: 50%;
-            display: inline-block; position: relative;
-        }
-        .status-online .status-dot {
-            animation: pulse-green 2s infinite;
-        }
-        @keyframes pulse-green {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-
-        /* --- ROOM CARDS --- */
-        .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; margin-top: 10px; }
-        .room-card { 
-            border: 1px solid var(--border); background: white; overflow: hidden; display: flex; flex-direction: column; 
-            transition: all 0.3s ease; border-top: 4px solid var(--ez-brown);
-        }
-        .room-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .room-card-header { background: #fafafa; padding: 15px 20px; font-weight: 800; display: flex; justify-content: space-between; color: var(--ez-brown); text-transform: uppercase; font-size: 12px; }
-        .room-card-body { padding: 15px 20px; flex-grow: 1; }
-        .room-card-footer { padding: 15px 20px; background: #fafafa; border-top: 1px solid #eee; font-weight: 800; color: var(--ez-gold); font-size: 14px; }
-        
-        .device-list { list-style: none; margin-bottom: 15px; }
-        .device-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f1f1f1; font-size: 13px; }
-
-        /* --- TABLE UI --- */
-        .table-container { margin-top: 20px; border: 1px solid var(--border); border-radius: 4px; overflow-x: auto; position: relative; }
-        table { width: 100%; border-collapse: collapse; min-width: 1100px; }
-        th { background: var(--ez-brown); color: white; text-align: left; padding: 15px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
-        td { padding: 10px 12px; border-bottom: 1px solid #f3f4f6; font-size: 13px; vertical-align: middle; position: relative; }
-        
-        .val-mirror { display: none; }
-        
-        table .row-input {
-            width: 100%; padding: 8px 5px; border: 1px solid #e5e7eb; border-radius: 2px;
-            font-size: 12.5px; background: white; outline: none; transition: 0.2s;
-        }
-
-        .grand-total-section { 
-            margin-top: 30px; padding: 35px; background: var(--ez-brown); color: white; 
-            display: flex; justify-content: flex-end; gap: 40px; flex-wrap: wrap; border-radius: 4px;
-        }
-        .total-box h3 { margin: 0; font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; }
-        .total-box p { margin-top: 8px; font-size: 26px; font-weight: 800; color: var(--ez-gold); }
-
-        /* --- MODALS --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: none; justify-content: center; align-items: center; z-index: 6000; padding: 15px; backdrop-filter: blur(4px); }
-        .modal-content { background: white; padding: 40px; border-radius: 4px; width: 95%; max-width: 480px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
-        .modal-content h2 { color: var(--ez-brown); font-weight: 900; font-size: 24px; margin-bottom: 20px; text-transform: uppercase; }
-
-        .multiplier-grid { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; max-height: 50vh; overflow-y: auto; }
-        .multiplier-row { display: grid; grid-template-columns: 1fr 80px; align-items: center; padding: 12px 15px; background: #fafafa; border-radius: 2px; border: 1px solid #eee; }
-        .multiplier-row input { padding: 8px; border: 1px solid var(--border); text-align: center; font-weight: 700; outline: none; }
-
-        /* Policy UI */
-        .policy-container { margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        .policy-box { padding: 20px; background: #fdfdfd; border: 1px dashed var(--border); border-radius: 4px; position: relative; }
-        .policy-box h5 { font-size: 11px; text-transform: uppercase; color: var(--ez-brown); margin-bottom: 12px; font-weight: 800; letter-spacing: 1px; }
-        .policy-text { font-size: 13px; color: var(--text-muted); line-height: 1.6; white-space: pre-wrap; }
-
-        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--ez-brown); color: white; padding: 12px 30px; border-radius: 2px; z-index: 9999; display: none; font-size: 14px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-
-        @media print {
-            .no-print, .tabs, .search-box-container, .header-status, .add-row-container, .btn, #loginOverlay, .policy-box button, #toast, .modal-overlay { display: none !important; }
-            body { background: white !important; }
-            .container { display: block !important; box-shadow: none !important; border: none !important; padding: 0 !important; width: 100% !important; margin: 0 !important; }
-            .project-info { display: grid !important; grid-template-columns: 1fr 1fr !important; border: 1px solid #eee !important; background: #fafafa !important; padding: 15px !important; margin-bottom: 20px !important; }
-            .val-mirror { display: block !important; font-weight: 700; color: black; font-size: 8pt; }
-            .display-label, input, select, textarea { display: none !important; }
-            .table-container { overflow: visible !important; border: none !important; margin-top: 10px !important; }
-            table { width: 100% !important; border: 1px solid #ccc !important; min-width: unset !important; table-layout: auto !important; }
-            /* FIXED: Standardized smaller font for print for a professional look */
-            th { background: #f0f0f0 !important; color: black !important; border: 1px solid #ccc !important; font-size: 7.5pt !important; padding: 6px 4px !important; }
-            td { border: 1px solid #ccc !important; font-size: 8pt !important; padding: 6px 4px !important; word-wrap: break-word !important; }
-            
-            .grand-total-section { background: #2b1d10 !important; color: #e0b440 !important; margin-top: 15px !important; padding: 20px !important; }
-            .total-box p { color: #e0b440 !important; font-size: 18pt !important; }
-            .policy-container { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 20px !important; border-top: 1px solid #eee !important; margin-top: 20px !important; padding-top: 15px !important; }
-            .policy-box { border: none !important; padding: 0 !important; background: transparent !important; }
-            .policy-text { display: block !important; color: black !important; font-size: 8.5pt !important; }
-            .tata-logo-black { filter: brightness(0) !important; }
-        }
+        body { font-family: 'Inter', sans-serif; }
+        .brand-gradient { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .input-focus:focus { border-color: #3b82f6; ring: 2px; ring-color: #bfdbfe; outline: none; }
+        .modal-overlay { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); }
+        /* Remove arrows from number input */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 min-h-screen">
 
-<!-- LOGIN OVERLAY -->
-<div id="loginOverlay">
-    <div class="login-card">
-        <div class="company-logo-area" style="justify-content: center; margin-bottom: 35px;">
-            <img src="https://www.tatapower.com/content/experience-fragments/tatapoweraemsitesprogram/in/en/tatapower/header/Header-ExpressoTheme/_jcr_content/root/container/navigation/image.coreimg.svg/1723030002763/tp-logo.svg" alt="Tata Power" class="tata-logo-black">
-            <div class="logo-divider"></div>
-            <div style="display: flex; flex-direction: column; text-align: left;">
-                <span class="partner-tag">Channel Partner</span>
-                <img src="https://roxtronicshub.github.io/rhi.png" alt="RHI Logo" style="max-height: 40px;">
-            </div>
-        </div>
-        <h2>Access Portal</h2>
-        <p style="color: #666; font-size: 14px; margin-bottom: 25px;">Professional Home Automation Planner</p>
-        <input type="text" id="userName" placeholder="Username">
-        <input type="password" id="passCode" placeholder="Password">
-        <button id="loginBtn" onclick="attemptLogin()">Log In →</button>
-        <p id="loginError" style="color: var(--danger); font-size: 13px; margin-top: 15px; display: none; font-weight: 700;">Invalid credentials.</p>
-    </div>
-</div>
-
-<div id="toast"></div>
-
-<!-- Success Modal -->
-<div id="successModal" class="modal-overlay" style="display: none;">
-    <div class="modal-content" style="text-align: center; padding: 50px;">
-        <div style="font-size: 60px; margin-bottom: 20px; color: var(--secondary);">✔️</div>
-        <h2 id="successTitle" style="color: var(--ez-brown); margin-bottom: 12px; font-size: 26px;">Success!</h2>
-        <p id="successMsg" style="color: var(--text-muted); margin-bottom: 30px; font-size: 15px;">Action completed successfully.</p>
-        <button class="btn btn-solid" style="width: 100%;" onclick="closeSuccessModal()">Continue →</button>
-    </div>
-</div>
-
-<div class="container" id="mainApp">
-    <!-- Header -->
-    <div class="header-top">
-        <div class="company-logo-area">
-            <img src="https://www.tatapower.com/content/experience-fragments/tatapoweraemsitesprogram/in/en/tatapower/header/Header-ExpressoTheme/_jcr_content/root/container/navigation/image.coreimg.svg/1723030002763/tp-logo.svg" alt="Tata Power" class="tata-logo-black">
-            <div class="logo-divider"></div>
-            <div style="display: flex; flex-direction: column;">
-                <span class="partner-tag">Channel Partner</span>
-                <img src="https://roxtronicshub.github.io/rhi.png" alt="RHI Logo" style="max-height: 45px;">
-            </div>
-        </div>
-        <div class="quotation-title">
-            <h1>PLANNER PRO <span id="roleBadge" class="role-badge"></span><button class="btn btn-logout no-print" onclick="logout()">Logout</button></h1>
-            <p style="color: var(--text-muted); font-size: 13px;">Advanced Home Automation Solutions</p>
-        </div>
-    </div>
-
-    <!-- GLOBAL DASHBOARD -->
-    <div class="project-info" id="globalDashboard">
-        <div class="info-group">
-            <label>Customer Name</label>
-            <input type="text" placeholder="e.g. Rahul Sharma" id="custName" oninput="mirrorProjectInfo(this)">
-            <div id="mirrorCustName" class="val-mirror"></div>
-        </div>
-        <div class="info-group">
-            <label>Site Address</label>
-            <input type="text" placeholder="City / Location" id="siteAddr" oninput="mirrorProjectInfo(this)">
-            <div id="mirrorSiteAddr" class="val-mirror"></div>
-        </div>
-        <div class="info-group">
-            <label>Quotation Number</label>
-            <div id="quotNo" class="display-label">Loading...</div>
-            <div id="mirrorQuotNo" class="val-mirror"></div>
-        </div>
-        <div class="info-group">
-            <label>Quotation Date</label>
-            <div id="quotDate" class="display-label">Loading...</div>
-            <div id="mirrorDate" class="val-mirror"></div>
-        </div>
-    </div>
-
-    <!-- Navigation Tabs -->
-    <div class="tabs no-print" id="navTabs">
-        <button class="tab-btn active" id="tab-planner" onclick="switchTab('planner')">Room Planner</button>
-        <button class="tab-btn" id="tab-quotation" onclick="switchTab('quotation')">Quotation View</button>
-        <button class="tab-btn admin-only" id="tab-customer" onclick="switchTab('customer')">Registration</button>
-    </div>
-
-    <!-- Live Status & Search -->
-    <div class="toolbar-header no-print">
-        <div class="live-status-badge status-offline" id="statusBadge">
-            <span class="status-dot"></span>
-            <span id="syncStatus">Syncing Master Data...</span>
-        </div>
-        <div class="toolbar-actions">
-            <input type="text" id="searchQuotInput" class="search-input" placeholder="Find Quotation No." style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 2px; width: 220px; font-size: 13px;">
-            <button class="btn btn-solid" style="height: 38px; font-size: 11px;" onclick="searchQuotation()">Search 🔍</button>
-            <button class="btn" style="height: 38px; font-size: 11px; border-color: #cbd5e1; color: #64748b;" onclick="fetchLiveData()">Sync Master 🔄</button>
-        </div>
-    </div>
-
-    <!-- TAB: CUSTOMER REGISTRATION -->
-    <div id="customerTab" class="tab-content" style="display:none;">
-        <h2 style="margin-bottom: 25px; border-left: 5px solid var(--ez-gold); padding-left: 15px; text-transform: uppercase; font-size: 18px; color: var(--ez-brown);">Customer Registration</h2>
-        <div class="project-info" style="grid-template-columns: 1fr 1fr; background: white;">
-            <div class="info-group" style="grid-column: span 2;">
-                <label>Category</label>
-                <div class="category-group">
-                    <label class="radio-item"><input type="radio" name="custCategory" value="Individual" checked> Individual</label>
-                    <label class="radio-item"><input type="radio" name="custCategory" value="Builder"> Builder</label>
-                    <label class="radio-item"><input type="radio" name="custCategory" value="Architect"> Architect</label>
-                    <label class="radio-item"><input type="radio" name="custCategory" value="Designer"> Designer</label>
+    <!-- Navbar/Header -->
+    <nav class="brand-gradient text-white shadow-xl">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center space-x-3 mb-4 md:mb-0">
+                <div class="bg-white p-2 rounded-xl shadow-inner">
+                    <svg class="w-8 h-8 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12h-4l-3 9L9 3l-3 9H2" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-extrabold tracking-tight uppercase">CareTech Repair Services</h1>
+                    <p class="text-xs font-medium opacity-80 uppercase tracking-widest flex items-center">
+                        <span class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
+                        Expert Medical Device Care
+                    </p>
                 </div>
             </div>
-            <div class="info-group"><label>Full Name</label><input type="text" id="regName" placeholder="Enter full name"></div>
-            <div class="info-group"><label>Mobile Number</label><input type="tel" id="regPhone" placeholder="+91"></div>
-            <div class="info-group"><label>Email Address</label><input type="email" id="regEmail" placeholder="email@example.com"></div>
-            <div class="info-group"><label>Complete Site Address</label><input type="text" id="regAddr" placeholder="Details of project site"></div>
-        </div>
-        <div style="margin-top: 20px;"><button class="btn btn-solid" onclick="saveCustomerRegistration()">Register New Customer →</button></div>
-    </div>
-
-    <!-- TAB: ROOM PLANNER -->
-    <div id="plannerTab" class="tab-content">
-        <!-- Spacing Optimized -->
-        <div class="toolbar-header no-print" style="margin-top: 20px;">
-            <div class="toolbar-actions" style="gap: 15px;">
-                <button class="btn btn-solid" onclick="showRoomPopup()">+ Add Rooms / Site</button>
-                <button class="btn" style="border-color: #cbd5e1; color: #64748b;" onclick="showCustomRoomPopup()">+ Add Other Area</button>
+            <div class="text-sm font-medium bg-blue-800/40 px-5 py-2.5 rounded-full border border-blue-400/30 backdrop-blur-sm">
+                Expert Support: <span class="font-bold">+91 7987315017</span>
             </div>
         </div>
-        <div id="roomContainer" class="room-grid">
-            <div style="text-align: center; grid-column: 1/-1; padding: 60px; color: #9ca3af;">Configuration area. Click buttons to begin.</div>
-        </div>
-    </div>
+    </nav>
 
-    <!-- TAB: QUOTATION VIEW -->
-    <div id="quotationTab" class="tab-content" style="display:none;">
-        <div class="table-container">
-            <table id="mainTable">
-                <thead>
-                    <tr><th>#</th><th>Room Name</th><th>Series</th><th>Description</th><th>HSN</th><th>Qty</th><th>MRP</th><th>Disc%</th><th>Base</th><th>Amt</th><th>GST%</th><th>GST Amt</th><th>Total</th><th class="no-print"></th></tr>
-                </thead>
-                <tbody id="tableBody"></tbody>
-            </table>
-        </div>
-        <div class="add-row-container no-print" style="margin-top: 20px;"><button class="btn" onclick="addRow()">+ Manual Line Item</button></div>
+    <main class="max-w-4xl mx-auto px-4 py-10">
         
-        <div class="grand-total-section">
-            <div class="total-box"><h3>Taxable Amount</h3><p id="totalBase">₹0.00</p></div>
-            <div class="total-box"><h3>Total GST</h3><p id="totalGST">₹0.00</p></div>
-            <div class="total-box" style="border-left: 1px solid rgba(255,255,255,0.2); padding-left: 30px;"><h3>Grand Total</h3><p id="grandTotal">₹0.00</p></div>
+        <!-- Tab Navigation -->
+        <div class="flex p-1.5 bg-slate-200 rounded-2xl mb-10 max-w-sm mx-auto shadow-inner">
+            <button onclick="showTab('track')" id="btn-track" class="flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 bg-white text-blue-700 shadow-md tracking-wider text-center uppercase">
+                Track Status
+            </button>
+            <button onclick="showTab('register')" id="btn-register" class="flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 text-slate-600 tracking-wider text-center uppercase">
+                New Repair
+            </button>
         </div>
-        
-        <div class="quotation-footer">
-            <div class="policy-container">
-                <div class="policy-box">
-                    <h5>Payment Terms</h5>
-                    <div id="payMirrorDisplay" class="policy-text">Terms not set.</div>
-                </div>
-                <div class="policy-box">
-                    <h5>Warranty & Policies</h5>
-                    <div id="warrantyMirrorDisplay" class="policy-text">Policies not set.</div>
+
+        <!-- TRACKING SECTION -->
+        <div id="tab-track" class="tab-content active">
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-8 md:p-12">
+                    <div class="mb-8 text-center md:text-left">
+                        <h2 class="text-2xl font-bold text-slate-800">Track Service Progress</h2>
+                        <p class="text-slate-500 text-sm mt-1">Enter Repair ID or registered Mobile Number to see current status.</p>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <div class="relative flex-1">
+                            <input type="text" id="searchId" placeholder="ID (e.g. BP-XXXXXX / NB-XXXXXX)" 
+                                   class="w-full pl-5 pr-5 py-4 border border-slate-300 rounded-2xl input-focus font-semibold text-slate-700 placeholder:text-slate-400 bg-slate-50/50">
+                        </div>
+                        <button onclick="fetchStatus()" 
+                                class="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-bold transition-all transform active:scale-95 shadow-lg shadow-blue-200 uppercase tracking-wide">
+                            Trace Data
+                        </button>
+                    </div>
+
+                    <div id="searchResult" class="hidden mt-10 p-1 bg-slate-50 rounded-3xl border border-slate-200">
+                        <div id="resultContent" class="p-8"></div>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <div class="signature-section" style="text-align: right; margin-top: 60px;">
-                <div id="printSignatureHeader" style="font-weight: 800; font-size: 14px; text-transform: uppercase;">For Roxtronics Hub India</div>
-                <div class="signature-box" style="margin-left:auto; font-weight: 600; color: var(--text-muted); font-size: 13px;">Authorized Signatory</div>
+        <!-- REGISTRATION SECTION -->
+        <div id="tab-register" class="tab-content">
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-8 md:p-12">
+                    <div class="mb-10">
+                        <h2 class="text-2xl font-bold text-slate-800 text-center sm:text-left uppercase tracking-tight">Register New Device</h2>
+                        <p class="text-slate-500 text-sm mt-1 text-center sm:text-left">Select device category and fill customer details.</p>
+                    </div>
+
+                    <form id="regForm" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Updated Device Category Dropdown with OTH -->
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Device Category</label>
+                            <select id="deviceCategory" onchange="generateUniqueID()" 
+                                    class="w-full p-4 bg-white border border-slate-300 rounded-2xl input-focus font-bold text-slate-700 cursor-pointer shadow-sm">
+                                <option value="BP" selected>BP Monitor</option>
+                                <option value="NB">Nebulizer</option>
+                                <option value="OX">Oximeter</option>
+                                <option value="OTH">Other Medical Machine</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Service ID (Auto)</label>
+                            <input type="text" id="repairId" readonly 
+                                   class="w-full p-4 bg-blue-50 border border-blue-100 rounded-2xl font-mono font-bold text-blue-700 text-lg">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Customer Full Name</label>
+                            <input type="text" id="custName" required placeholder="Full Name" 
+                                   class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl input-focus font-medium">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Contact Number</label>
+                            <input type="number" id="custMobile" required placeholder="10 Digit Number" 
+                                   oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"
+                                   class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl input-focus font-medium">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Device Model</label>
+                            <input type="text" id="machineModel" required placeholder="e.g. Omron M3 / Dr. Trust" 
+                                   class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl input-focus font-medium">
+                        </div>
+
+                        <div class="md:col-span-1 space-y-2">
+                            <!-- Placeholder -->
+                        </div>
+
+                        <div class="md:col-span-2 space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Fault Description</label>
+                            <textarea id="problem" rows="3" required placeholder="Describe the technical issue..." 
+                                      class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl input-focus font-medium"></textarea>
+                        </div>
+                        <button type="submit" 
+                                class="md:col-span-2 bg-blue-600 hover:bg-blue-700 text-white py-5 rounded-2xl font-black text-lg transition-all shadow-xl shadow-blue-200 mt-4 uppercase tracking-widest">
+                            Confirm Registration
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Professional Success Modal -->
+    <div id="successModal" class="fixed inset-0 flex items-center justify-center z-50 hidden modal-overlay p-4">
+        <div class="bg-white rounded-[2.5rem] shadow-2xl max-w-md w-full overflow-hidden border border-slate-100">
+            <div class="brand-gradient p-10 text-center relative">
+                <div class="bg-white/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/30 backdrop-blur-md">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h3 class="text-3xl font-black text-white uppercase tracking-tight">Registered</h3>
+                <p class="text-blue-100 text-xs mt-1 font-bold uppercase tracking-widest opacity-80">Device Entry Successful</p>
+            </div>
+            <div class="p-10 text-center">
+                <p class="text-slate-400 mb-2 font-bold text-[10px] uppercase tracking-[0.2em]">Customer ID Key</p>
+                <div class="bg-slate-50 border-2 border-dashed border-slate-200 p-6 rounded-3xl mb-10">
+                    <span id="modalIdDisplay" class="text-3xl font-black text-slate-800 tracking-[0.15em] font-mono"></span>
+                </div>
+                <button onclick="closeModal()" class="w-full bg-slate-900 text-white font-black py-5 rounded-2xl hover:bg-black transition-all shadow-xl uppercase tracking-widest text-sm">
+                    Back to Dashboard
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- MAIN ACTIONS -->
-    <div class="actions no-print" id="footerActions" style="margin-top: 50px; border-top: 1px solid var(--border); padding-top: 30px; display: flex; gap: 15px; flex-wrap: wrap;">
-        <button class="btn" style="border-color: #fca5a5; color: #ef4444;" onclick="resetApp()">New Project</button>
-        <button class="btn btn-solid" id="globalSaveBtn" onclick="saveQuotation()">Save To Cloud →</button>
-        <button class="btn btn-settings" style="border-color: #94a3b8; color: #64748b;" onclick="showTermsPopup()">Settings ⚙️</button>
-        <button class="btn" style="flex-grow: 1; justify-content: center; background: #f3f4f6; border-color: #d1d5db;" onclick="window.print()">Download Professional PDF ↓</button>
-    </div>
-</div>
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 hidden bg-slate-900 text-white px-8 py-4 rounded-2xl shadow-2xl text-xs font-black uppercase tracking-widest z-[100]"></div>
 
-<!-- MODALS -->
-<div id="termsModal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-        <h2>Portal Settings</h2>
-        <div class="info-group">
-            <label>Payment Schedule</label>
-            <textarea id="paymentArea" style="height: 100px; width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 4px; font-family: inherit; outline: none;"></textarea>
-        </div>
-        <div class="info-group" style="margin-top:20px;">
-            <label>Warranty & General Policies</label>
-            <textarea id="warrantyArea" style="height: 150px; width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 4px; font-family: inherit; outline: none;"></textarea>
-        </div>
-        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 25px;">
-            <button class="btn btn-solid" style="font-size: 11px;" onclick="updateUserDefaults()">Update Cloud Profile</button>
-            <button class="btn" style="font-size: 11px;" onclick="closeTermsPopup()">Close Window</button>
-        </div>
-    </div>
-</div>
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxEAqcoW12GHjEDiFeE4vQTuA1YuXv0g5tQtchR5lqVkn8GMzmmHkA2G7Cg224C8pKz/exec";
 
-<div id="roomModal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-        <h2>Room Configuration</h2>
-        <div class="multiplier-grid" id="multiplierInputs"></div>
-        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 25px;">
-            <button class="btn" onclick="closeRoomPopup()">Cancel</button>
-            <button class="btn btn-solid" onclick="generateRoomCards()">Apply Configuration →</button>
-        </div>
-    </div>
-</div>
+        function generateUniqueID() {
+            const prefix = document.getElementById('deviceCategory').value;
+            const date = new Date();
+            const timestamp = date.getTime().toString().slice(-6);
+            const random = Math.floor(Math.random() * 90) + 10;
+            const newID = `${prefix}-${timestamp}${random}`;
+            document.getElementById('repairId').value = newID;
+            return newID;
+        }
 
-<div id="customRoomModal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-        <h2>Add Custom Area</h2>
-        <div class="info-group"><label>Area Name</label><input type="text" id="customRoomName" placeholder="e.g. Gym, Cinema"></div>
-        <div class="info-group" style="margin-top:15px;"><label>Quantity</label><input type="number" id="customRoomCount" value="1" min="1"></div>
-        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 25px;">
-            <button class="btn" onclick="closeCustomRoomPopup()">Cancel</button>
-            <button class="btn btn-solid" onclick="addCustomRooms()">Add Areas →</button>
-        </div>
-    </div>
-</div>
+        window.onload = generateUniqueID;
 
-<script>
-    let deviceDatabase = {};
-    let plannedRooms = []; 
-    let manualItems = []; 
-    let userRole = 'none';
-    let userPrefix = 'QT/RHI/'; 
-    let currentLoginUser = ''; 
-    const roomsList = ["Living Room", "Master Bedroom", "Bedroom", "Kitchen", "Dining Area", "Bathroom", "Balcony", "Home Theatre"];
-    const inbuiltUrl = "https://script.google.com/macros/s/AKfycbw-Rba94kLqabkhEDAt9BHn9xG_AfwOr9urMe9PSfYifOAPl5wUGmvi2aMKxMmT5Ki5zg/exec";
-
-    const roleDefaults = {
-        admin: { payment: "1. 50% Advance with Purchase Order.\n2. 50% Balance before dispatch.", warranty: "1. 1-year standard warranty on manufacturing defects.\n2. Prices valid for 15 days." },
-        architect: { payment: "1. Advance as per agreement.\n2. Final settlement on handover.", warranty: "1. Product warranty provided by manufacturer.\n2. Implementation covered for 6 months." }
-    };
-
-    function showTermsPopup() { document.getElementById('termsModal').style.display = 'flex'; }
-    function closeTermsPopup() { document.getElementById('termsModal').style.display = 'none'; syncPolicies(); }
-
-    function logout() {
-        const btn = document.getElementById('loginBtn');
-        btn.innerText = "Log In →"; btn.disabled = false;
-        document.getElementById('loginError').style.display = 'none';
-        userRole = 'none'; userPrefix = 'QT/RHI/'; currentLoginUser = '';
-        document.getElementById('mainApp').style.display = 'none';
-        document.getElementById('loginOverlay').style.display = 'flex';
-        document.getElementById('userName').value = ""; document.getElementById('passCode').value = "";
-        resetApp(); 
-    }
-
-    async function attemptLogin() {
-        const user = document.getElementById('userName').value.trim();
-        const pass = document.getElementById('passCode').value.trim();
-        const btn = document.getElementById('loginBtn');
-        const err = document.getElementById('loginError');
-        if(!user || !pass) { showToast("Credentials required!"); return; }
-        btn.innerText = "VERIFYING..."; btn.disabled = true; err.style.display = 'none';
-        try {
-            const res = await fetch(`${inbuiltUrl}?action=checkLogin&user=${encodeURIComponent(user)}&pass=${encodeURIComponent(pass)}`);
-            const data = await res.json();
-            if(data.status === 'success') {
-                userRole = data.role.toLowerCase();
-                userPrefix = data.prefix || 'QT/RHI/';
-                currentLoginUser = user;
-                resetApp();
-                const defaults = roleDefaults[userRole] || roleDefaults.admin;
-                document.getElementById('paymentArea').value = data.payment || defaults.payment;
-                document.getElementById('warrantyArea').value = data.warranty || defaults.warranty;
-                enterApp();
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            
+            const btnT = document.getElementById('btn-track');
+            const btnR = document.getElementById('btn-register');
+            
+            if(tab === 'track') {
+                btnT.className = "flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 bg-white text-blue-700 shadow-md tracking-wider text-center uppercase";
+                btnR.className = "flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 text-slate-600 tracking-wider text-center uppercase";
             } else {
-                err.style.display = 'block'; btn.innerText = "Log In →"; btn.disabled = false;
+                btnR.className = "flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 bg-white text-blue-700 shadow-md tracking-wider text-center uppercase";
+                btnT.className = "flex-1 py-3 px-4 rounded-xl text-xs font-black transition-all duration-200 text-slate-600 tracking-wider text-center uppercase";
+                if(!document.getElementById('custName').value) generateUniqueID();
             }
-        } catch (e) { showToast("Sync Error!"); btn.innerText = "Log In →"; btn.disabled = false; }
-    }
-
-    async function updateUserDefaults() {
-        if(!currentLoginUser) return;
-        const pVal = document.getElementById('paymentArea').value;
-        const wVal = document.getElementById('warrantyArea').value;
-        showToast("Saving Cloud Profile...");
-        try {
-            const payload = { action: "updateUserDefaults", user: currentLoginUser, payment: pVal, warranty: wVal };
-            await fetch(inbuiltUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            document.getElementById('successTitle').innerText = "Settings Updated!";
-            document.getElementById('successMsg').innerText = "Your portal preferences have been saved to the cloud.";
-            closeTermsPopup(); 
-            openSuccessModal();
-        } catch(e) { showToast("Error!"); }
-    }
-
-    function enterApp() {
-        closeSuccessModal();
-        closeTermsPopup();
-        document.getElementById('loginOverlay').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
-        const badge = document.getElementById('roleBadge');
-        const signHeader = document.getElementById('printSignatureHeader');
-        document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
-        
-        if(userRole === 'architect') {
-            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
-            badge.innerText = "Architect Access"; badge.className = "role-badge badge-arch";
-            if(signHeader) signHeader.style.display = 'none'; 
-            showToast(`Access active: ${userPrefix}`);
-        } else {
-            badge.innerText = "Administrator Access"; badge.className = "role-badge badge-admin";
-            if(signHeader) signHeader.style.display = 'block';
-            showToast(`Full access enabled`);
         }
-        updateAutomaticFields(); fetchLiveData(); syncPolicies(); 
-    }
 
-    function showToast(msg) { const t = document.getElementById('toast'); t.innerText = msg; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 3000); }
-    function openSuccessModal() { document.getElementById('successModal').style.display = 'flex'; }
-    function closeSuccessModal() { document.getElementById('successModal').style.display = 'none'; }
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
 
-    function mirrorProjectInfo(el) { const m = document.getElementById(el.id === 'custName' ? 'mirrorCustName' : 'mirrorSiteAddr'); if (m) m.innerText = el.value; }
-    function updateLabelMirrors() {
-        document.getElementById('mirrorQuotNo').innerText = document.getElementById('quotNo').innerText;
-        document.getElementById('mirrorDate').innerText = document.getElementById('quotDate').innerText;
-    }
+        function showSuccessModal(id) {
+            document.getElementById('modalIdDisplay').innerText = id;
+            document.getElementById('successModal').classList.remove('hidden');
+        }
 
-    async function saveCustomerRegistration() {
-        const payload = { action: "registerCustomer", customerType: document.querySelector('input[name="custCategory"]:checked').value, name: document.getElementById('regName').value, phone: document.getElementById('regPhone').value, email: document.getElementById('regEmail').value, addr: document.getElementById('regAddr').value };
-        if (!payload.name || !payload.phone) return showToast("Validation failed!");
-        try { await fetch(inbuiltUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }); 
-        document.getElementById('successTitle').innerText = "Customer Registered!";
-        document.getElementById('successMsg').innerText = "Client record added to cloud database.";
-        openSuccessModal(); } catch (e) { showToast("Error!"); }
-    }
+        function closeModal() {
+            document.getElementById('successModal').classList.add('hidden');
+        }
 
-    function resetApp() {
-        plannedRooms = []; manualItems = [];
-        document.getElementById('custName').value = ""; document.getElementById('siteAddr').value = "";
-        document.querySelectorAll('.val-mirror').forEach(m => m.innerText = "");
-        document.getElementById('totalBase').innerText = "₹0.00";
-        document.getElementById('totalGST').innerText = "₹0.00";
-        document.getElementById('grandTotal').innerText = "₹0.00";
-        updateAutomaticFields(); renderRoomCards(); syncPlannerToQuotation(); switchTab('planner');
-    }
+        async function fetchStatus() {
+            const id = document.getElementById('searchId').value;
+            if(!id) return showToast("Input Required");
 
-    function updateAutomaticFields() {
-        const d = new Date();
-        const dateStr = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
-        document.getElementById('quotDate').innerText = dateStr; document.getElementById('mirrorDate').innerText = dateStr;
-        fetchNextQuotNo();
-    }
+            const resultDiv = document.getElementById('searchResult');
+            const resultContent = document.getElementById('resultContent');
+            
+            showToast("Searching Database...");
+            
+            try {
+                const response = await fetch(`${SCRIPT_URL}?id=${id}&mobile=${id}`);
+                const data = await response.json();
 
-    async function fetchNextQuotNo() {
-        document.getElementById('quotNo').innerText = "...";
-        try {
-            const res = await fetch(`${inbuiltUrl}?action=getNextQuotNo&prefix=${encodeURIComponent(userPrefix)}&t=${Date.now()}`);
-            const data = await res.json();
-            if (data && data.nextQuotNo) { document.getElementById('quotNo').innerText = data.nextQuotNo; updateLabelMirrors(); }
-        } catch (e) { document.getElementById('quotNo').innerText = "Sync Error"; }
-    }
-
-    async function fetchLiveData() {
-        updateStatusBadge('offline', 'Syncing Database...');
-        try {
-            const res = await fetch(inbuiltUrl + "?t=" + Date.now()); 
-            const data = await res.json();
-            if (data && Object.keys(data).length > 0) { 
-                deviceDatabase = data; 
-                updateStatusBadge('online', 'Live Connected'); 
-                renderRoomCards(); 
-                showToast("Database Ready!"); 
+                resultDiv.classList.remove('hidden');
+                if(data.result === 'success') {
+                    resultContent.innerHTML = `
+                        <div class="flex flex-col md:flex-row justify-between items-start border-b border-slate-200 pb-6 mb-6">
+                            <div>
+                                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Customer Record</h4>
+                                <p class="text-2xl font-black text-slate-800">${data.data.name}</p>
+                            </div>
+                            <div class="mt-4 md:mt-0 text-right">
+                                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Service ID</h4>
+                                <p class="font-mono text-blue-600 font-black text-lg">${data.data.id}</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Equipment Details</h4>
+                                <p class="text-slate-800 font-bold text-lg">${data.data.model}</p>
+                            </div>
+                            <div class="bg-blue-600 p-5 rounded-2xl shadow-lg shadow-blue-100">
+                                <h4 class="text-[10px] font-black text-blue-200 uppercase tracking-widest mb-1">Live Status</h4>
+                                <p class="text-white font-black text-xl uppercase tracking-tighter">${data.data.status}</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    resultContent.innerHTML = `
+                        <div class="text-center py-6">
+                            <div class="bg-red-50 text-red-500 inline-block p-4 rounded-full mb-4">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"></path></svg>
+                            </div>
+                            <p class="text-slate-800 font-black uppercase tracking-wider italic">No Entry Found</p>
+                            <p class="text-slate-400 text-sm font-medium mt-1">Please verify the ID or contact support.</p>
+                        </div>`;
+                }
+            } catch (error) {
+                showToast("Server Connection Issue");
             }
-        } catch (error) { updateStatusBadge('offline', 'Failed'); }
-    }
-
-    function updateStatusBadge(status, text) {
-        const badge = document.getElementById('statusBadge');
-        badge.className = 'live-status-badge ' + (status === 'online' ? 'status-online' : 'status-offline');
-        document.getElementById('syncStatus').innerText = text;
-    }
-
-    async function searchQuotation() {
-        const searchVal = document.getElementById('searchQuotInput').value.trim();
-        if (!searchVal) return;
-        if (userRole === 'architect' && !searchVal.startsWith(userPrefix)) { showToast(`Access Denied!`); return; }
-        showToast("Retrieving Project...");
-        try {
-            const res = await fetch(`${inbuiltUrl}?action=getQuotation&quotNo=${searchVal}`);
-            const result = await res.json();
-            if (result && result.status === "success") {
-                const data = result.data;
-                document.getElementById('custName').value = data.custName; document.getElementById('siteAddr').value = data.siteAddr;
-                document.getElementById('quotNo').innerText = data.quotNo; document.getElementById('quotDate').innerText = data.date;
-                document.getElementById('mirrorCustName').innerText = data.custName; document.getElementById('mirrorSiteAddr').innerText = data.siteAddr;
-                document.getElementById('mirrorQuotNo').innerText = data.quotNo; document.getElementById('mirrorDate').innerText = data.date;
-                try {
-                    const termsParsed = JSON.parse(data.terms);
-                    document.getElementById('paymentArea').value = termsParsed.payment || "";
-                    document.getElementById('warrantyArea').value = termsParsed.warranty || "";
-                } catch(e) { document.getElementById('warrantyArea').value = data.terms; document.getElementById('paymentArea').value = ""; }
-                plannedRooms = data.plannedRooms; manualItems = data.manualItems;
-                renderRoomCards(); syncPlannerToQuotation(); syncPolicies();
-            } else { showToast("No record found!"); }
-        } catch (e) { showToast("Fetch Error!"); }
-    }
-
-    async function saveQuotation() {
-        if (document.getElementById('quotationTab').style.display === 'block') saveManualEntriesToMemory();
-        const qNo = document.getElementById('quotNo').innerText;
-        if (qNo.includes("...")) return;
-        const policies = { payment: document.getElementById('paymentArea').value, warranty: document.getElementById('warrantyArea').value };
-        const payload = { action: "saveQuotation", quotNo: qNo, custName: document.getElementById('custName').value, siteAddr: document.getElementById('siteAddr').value, date: document.getElementById('quotDate').innerText, plannedRooms: plannedRooms, manualItems: manualItems, grandTotal: document.getElementById('grandTotal').innerText, terms: JSON.stringify(policies) };
-        try { await fetch(inbuiltUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }); 
-        document.getElementById('successTitle').innerText = "Project Saved!";
-        document.getElementById('successMsg').innerText = "Quotation synced with Master Cloud.";
-        openSuccessModal(); resetApp(); } catch (e) { showToast("Error Saving!"); }
-    }
-
-    function switchTab(tab) {
-        if (tab !== 'quotation') saveManualEntriesToMemory();
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-        const tBtn = document.getElementById('tab-' + tab);
-        if(tBtn) tBtn.classList.add('active');
-        document.getElementById(tab + 'Tab').style.display = 'block';
-        if (tab === 'quotation') { syncPlannerToQuotation(); syncPolicies(); }
-    }
-
-    function renderRoomCards() {
-        const container = document.getElementById('roomContainer');
-        if (plannedRooms.length === 0) { container.innerHTML = `<div style="text-align:center;grid-column:1/-1;padding:60px;color:#9ca3af;">Click buttons to start planning.</div>`; return; }
-        container.innerHTML = plannedRooms.map((room, idx) => {
-            const seriesOpts = Object.keys(deviceDatabase).map(s => `<option value="${s}">${s}</option>`).join('');
-            return `<div class="room-card"><div class="room-card-header"><span>${room.name}</span><button style="background:none;color:#ef4444;border:none;cursor:pointer;" onclick="deleteRoom(${idx})">✖</button></div><div class="room-card-body"><ul class="device-list" style="list-style:none;">${room.devices.map((d, dIdx) => `<li class="device-item" style="display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid #f9f9f9;"><span>${d.item} <b>x${d.qty}</b></span><span class="no-print" style="cursor:pointer;color:red;" onclick="removeDevice(${idx}, ${dIdx})">🗑</span></li>`).join('')}</ul><div class="add-device-ui no-print" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; background:#f9f9f9; padding:10px; border-radius:4px;"><select class="room-series-select-${idx}" onchange="updateRoomCardItems(${idx})" style="padding:5px; font-size:11px; border:1px solid #ddd; outline:none;"><option value="">Series...</option>${seriesOpts}</select><select class="room-item-select-${idx}" style="padding:5px; font-size:11px; border:1px solid #ddd; outline:none;"><option value="">Item...</option></select><input type="number" class="room-qty-input-${idx}" value="1" min="1" style="padding:5px; font-size:11px; border:1px solid #ddd; outline:none;"><button class="btn btn-solid" style="padding:0; font-size:10px; height:30px;" onclick="addDeviceToRoom(${idx})">ADD +</button></div></div><div class="room-card-footer">Room Total: ₹${calculateRoomTotal(room).toLocaleString()}</div></div>`;
-        }).join('');
-    }
-
-    function updateRoomCardItems(idx) {
-        const sSel = document.querySelector(`.room-series-select-${idx}`), iSel = document.querySelector(`.room-item-select-${idx}`);
-        iSel.innerHTML = '<option value="">Item...</option>';
-        if (sSel.value && deviceDatabase[sSel.value]) deviceDatabase[sSel.value].forEach(p => { const o = document.createElement('option'); o.value = p.item; o.textContent = p.item; iSel.appendChild(o); });
-    }
-
-    function addDeviceToRoom(idx) {
-        const sSel = document.querySelector(`.room-series-select-${idx}`), iSel = document.querySelector(`.room-item-select-${idx}`), qInp = document.querySelector(`.room-qty-input-${idx}`);
-        if (!sSel.value || !iSel.value) return showToast("Select Product!");
-        const p = deviceDatabase[sSel.value].find(x => x.item === iSel.value);
-        plannedRooms[idx].devices.push({ series: sSel.value, item: iSel.value, hsn: p.hsn, mrp: p.mrp, discount: p.discount||0, gst: p.gst||18, qty: parseInt(qInp.value)||1 });
-        renderRoomCards();
-    }
-
-    function deleteRoom(idx) { plannedRooms.splice(idx, 1); renderRoomCards(); }
-    function removeDevice(r, d) { plannedRooms[r].devices.splice(d, 1); renderRoomCards(); }
-    function calculateRoomTotal(room) { return room.devices.reduce((acc, d) => { const disc = d.discount > 0 && d.discount < 1 ? d.discount * 100 : d.discount; const base = d.mrp - (d.mrp * (disc / 100)); const gst = d.gst > 0 && d.gst < 1 ? d.gst * 100 : d.gst; return acc + ((base + (base * (gst / 100))) * d.qty); }, 0); }
-
-    function syncPlannerToQuotation() {
-        const tbody = document.getElementById('tableBody'); tbody.innerHTML = "";
-        plannedRooms.forEach(room => {
-            room.devices.forEach(d => {
-                const tr = document.createElement('tr');
-                const disc = d.discount > 0 && d.discount < 1 ? d.discount * 100 : d.discount;
-                const gst = d.gst > 0 && d.gst < 1 ? d.gst * 100 : d.gst;
-                tr.innerHTML = `<td class="row-index"></td>
-                <td><div class="val-mirror">${room.name}</div><input type="text" class="row-input" value="${room.name}" readonly></td>
-                <td><div class="val-mirror">${d.series}</div><input type="text" class="row-input" value="${d.series}" readonly></td>
-                <td><div class="val-mirror">${d.item}</div><input type="text" class="row-input" value="${d.item}" readonly></td>
-                <td><div class="val-mirror">${d.hsn}</div><input type="text" class="row-input hsn-code" value="${d.hsn}" oninput="updateTableCalc(this)"></td>
-                <td><div class="val-mirror">${d.qty}</div><input type="number" class="row-input qty" value="${d.qty}" oninput="updateTableCalc(this)"></td>
-                <td><div class="val-mirror">${d.mrp}</div><input type="number" class="row-input mrp" value="${d.mrp}" oninput="updateTableCalc(this)"></td>
-                <td><div class="val-mirror">${disc.toFixed(2)}</div><input type="number" class="row-input disc" value="${disc.toFixed(2)}" oninput="updateTableCalc(this)"></td>
-                <td><div class="val-mirror">0.00</div><input type="text" class="row-input base-rate" readonly value="0.00"></td>
-                <td><div class="val-mirror">0.00</div><input type="text" class="row-input amount" readonly value="0.00"></td>
-                <td><div class="val-mirror">${gst.toFixed(2)}</div><input type="number" class="row-input gst-perc" value="${gst.toFixed(2)}" oninput="updateTableCalc(this)"></td>
-                <td><div class="val-mirror">0.00</div><input type="text" class="row-input gst-amt" readonly value="0.00"></td>
-                <td><div class="val-mirror">0.00</div><input type="text" class="row-input row-total" readonly value="0.00" style="color:var(--ez-brown); font-weight:bold;"></td>
-                <td class="no-print" style="text-align:center;"><button style="color:red;background:none;border:none;cursor:pointer;" onclick="this.closest('tr').remove();calculateGrandTotal();updateIndices();">✕</button></td>`;
-                tbody.appendChild(tr); updateTableCalc(tr.querySelector('.qty'));
-            });
-        });
-        manualItems.forEach(m => addManualRow(m)); updateIndices();
-        calculateGrandTotal();
-    }
-
-    function addRow() { addManualRow(); updateIndices(); }
-    function addManualRow(data = null) {
-        const tbody = document.getElementById('tableBody');
-        const tr = document.createElement('tr'); tr.className = 'is-manual';
-        const sOpts = Object.keys(deviceDatabase).map(s => `<option value="${s}" ${data&&data.series===s?'selected':''}>${s}</option>`).join('');
-        tr.innerHTML = `<td class="row-index"></td>
-        <td><div class="val-mirror">${data?data.room:'Manual'}</div><input type="text" class="row-input room-input" value="${data?data.room:'Manual'}" oninput="updateTableCalc(this)"></td>
-        <td><div class="val-mirror"></div><select class="row-input series-select" onchange="updateItems(this)"><option value="">Series...</option>${sOpts}</select></td>
-        <td><div class="val-mirror"></div><select class="row-input item-select" onchange="autoFillDetails(this)"><option value="">Item...</option></select></td>
-        <td><div class="val-mirror">${data?data.hsn:''}</div><input type="text" class="row-input hsn-code" value="${data?data.hsn:''}" oninput="updateTableCalc(this)"></td>
-        <td><div class="val-mirror">1</div><input type="number" class="row-input qty" value="${data?data.qty:'1'}" oninput="updateTableCalc(this)"></td>
-        <td><div class="val-mirror">0</div><input type="number" class="row-input mrp" value="${data?data.mrp:'0'}" oninput="updateTableCalc(this)"></td>
-        <td><div class="val-mirror">0</div><input type="number" class="row-input disc" value="${data?data.disc:'0'}" oninput="updateTableCalc(this)"></td>
-        <td><div class="val-mirror">0</div><input type="text" class="row-input base-rate" readonly value="0.00"></td>
-        <td><div class="val-mirror">0</div><input type="text" class="row-input amount" readonly value="0.00"></td>
-        <td><div class="val-mirror">18</div><input type="number" class="row-input gst-perc" value="${data?data.gst:'18'}" oninput="updateTableCalc(this)"></td>
-        <td><div class="val-mirror">0</div><input type="text" class="row-input gst-amt" readonly value="0.00"></td>
-        <td><div class="val-mirror">0</div><input type="text" class="row-input row-total" readonly value="0.00" style="color:var(--ez-brown); font-weight:bold;"></td>
-        <td class="no-print"><button style="color:red;background:none;border:none;cursor:pointer;" onclick="this.closest('tr').remove();calculateGrandTotal();updateIndices();">✕</button></td>`;
-        tbody.appendChild(tr); if (data) { updateItems(tr.querySelector('.series-select')); tr.querySelector('.item-select').value = data.item; updateTableCalc(tr.querySelector('.qty')); }
-    }
-
-    function updateItems(el) {
-        const itSel = el.closest('tr').querySelector('.item-select'); itSel.innerHTML = '<option value="">Select...</option>';
-        if (el.value && deviceDatabase[el.value]) deviceDatabase[el.value].forEach(p => { const o = document.createElement('option'); o.value = p.item; o.textContent = p.item; itSel.appendChild(o); });
-        updateTableCalc(el);
-    }
-
-    function autoFillDetails(el) {
-        const tr = el.closest('tr'), s = tr.querySelector('.series-select').value;
-        if (s && el.value) {
-            const p = deviceDatabase[s].find(x => x.item === el.value);
-            tr.querySelector('.hsn-code').value = p.hsn || ""; tr.querySelector('.mrp').value = p.mrp || 0;
-            let d = p.discount||0; if(d>0 && d<1) d*=100;
-            let g = p.gst||18; if(g>0 && g<1) g*=100;
-            tr.querySelector('.disc').value = d.toFixed(2); tr.querySelector('.gst-perc').value = g.toFixed(2);
         }
-        updateTableCalc(el);
-    }
 
-    function updateTableCalc(inp) {
-        const tr = inp.closest('tr'), q = parseFloat(tr.querySelector('.qty').value)||0, mrp = parseFloat(tr.querySelector('.mrp').value)||0, d = parseFloat(tr.querySelector('.disc').value)||0, gp = parseFloat(tr.querySelector('.gst-perc').value)||0;
-        const b = mrp - (mrp*(d/100)), a = b*q, ga = a*(gp/100);
-        tr.querySelector('.base-rate').value = b.toFixed(2); tr.querySelector('.amount').value = a.toFixed(2); tr.querySelector('.gst-amt').value = ga.toFixed(2); tr.querySelector('.row-total').value = (a+ga).toFixed(2);
-        
-        tr.querySelectorAll('.row-input').forEach(el => { 
-            const m = el.parentElement.querySelector('.val-mirror'); 
-            if(m) { m.innerText = (el.tagName === 'SELECT') ? (el.options[el.selectedIndex]?.text || "") : el.value; }
-        });
-        calculateGrandTotal();
-    }
+        document.getElementById('regForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const mobileInput = document.getElementById('custMobile');
+            
+            if(mobileInput.value.length !== 10) {
+                showToast("Mobile Number must be exactly 10 digits");
+                return;
+            }
 
-    function calculateGrandTotal() {
-        let tb=0, tg=0, gt=0;
-        document.querySelectorAll('#tableBody tr').forEach(tr => { tb += parseFloat(tr.querySelector('.amount').value)||0; tg += parseFloat(tr.querySelector('.gst-amt').value)||0; gt += parseFloat(tr.querySelector('.row-total').value)||0; });
-        document.getElementById('totalBase').innerText = `₹${tb.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
-        document.getElementById('totalGST').innerText = `₹${tg.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
-        document.getElementById('grandTotal').innerText = `₹${gt.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
-    }
+            const btn = e.target.querySelector('button');
+            btn.disabled = true;
+            btn.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg> PROCESSING...`;
 
-    function updateIndices() { document.querySelectorAll('.row-index').forEach((el, idx) => el.innerText = idx + 1); }
-    function showRoomPopup() { 
-        document.getElementById('multiplierInputs').innerHTML = roomsList.map(r => `<div class="multiplier-row"><label>${r}</label><input type="number" data-room="${r}" value="0" min="0"></div>`).join(''); 
-        document.getElementById('roomModal').style.display = 'flex'; 
-    }
-    function closeRoomPopup() { document.getElementById('roomModal').style.display = 'none'; }
-    function showCustomRoomPopup() { document.getElementById('customRoomName').value = ""; document.getElementById('customRoomModal').style.display = 'flex'; }
-    function closeCustomRoomPopup() { document.getElementById('customRoomModal').style.display = 'none'; }
-    function addCustomRooms() { 
-        const n = document.getElementById('customRoomName').value.trim(); 
-        const c = parseInt(document.getElementById('customRoomCount').value)||0; 
-        if(n && c>0) { createRoomLogic(n, c); closeCustomRoomPopup(); } 
-    }
-    
-    function createRoomLogic(t, q) { 
-        const existingCount = plannedRooms.filter(r => r.name.startsWith(t)).length;
-        for(let i=0; i<q; i++) {
-            plannedRooms.push({ id: Date.now() + Math.random(), name: `${t} ${existingCount + i + 1}`, devices: [] }); 
-        }
-        renderRoomCards();
-    }
-    
-    function generateRoomCards() { 
-        document.querySelectorAll('#multiplierInputs input').forEach(inp => { 
-            const val = parseInt(inp.value);
-            if(val > 0) createRoomLogic(inp.getAttribute('data-room'), val); 
-        }); 
-        closeRoomPopup(); 
-    }
-    
-    function syncPolicies() { 
-        const payVal = document.getElementById('paymentArea').value || "Terms not set.";
-        const warrantyVal = document.getElementById('warrantyArea').value || "Policies not set.";
-        document.getElementById('payMirrorDisplay').innerText = payVal;
-        document.getElementById('warrantyMirrorDisplay').innerText = warrantyVal;
-    }
-    
-    function saveManualEntriesToMemory() { 
-        manualItems = []; document.querySelectorAll('#tableBody tr.is-manual').forEach(row => { 
-            const sSel = row.querySelector('.series-select'), iSel = row.querySelector('.item-select');
-            manualItems.push({ room: row.querySelector('.room-input').value, series: sSel?sSel.value:"", item: iSel?iSel.value:"", hsn: row.querySelector('.hsn-code').value, qty: row.querySelector('.qty').value, mrp: row.querySelector('.mrp').value, disc: row.querySelector('.disc').value, gst: row.querySelector('.gst-perc').value }); 
-        }); 
-    }
-</script>
+            const currentId = document.getElementById('repairId').value;
+            const payload = {
+                action: 'register',
+                id: currentId,
+                name: document.getElementById('custName').value,
+                mobile: mobileInput.value,
+                model: document.getElementById('machineModel').value,
+                problem: document.getElementById('problem').value
+            };
+
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', 
+                    body: JSON.stringify(payload)
+                });
+                
+                showSuccessModal(currentId);
+                e.target.reset();
+                generateUniqueID(); 
+            } catch (error) {
+                showToast("Operation Failed");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Confirm Registration";
+            }
+        };
+    </script>
 </body>
 </html>
