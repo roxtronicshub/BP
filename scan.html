@@ -18,7 +18,7 @@
         }
         /* Camera feed ko sharp karne ke liye */
         #reader video {
-            filter: contrast(1.2) brightness(1.1);
+            filter: contrast(1.3) brightness(1.1) sharp(1.1);
             object-fit: cover !important;
         }
         #reader__dashboard_section_csr button {
@@ -33,8 +33,8 @@
         }
         .scanning-line {
             position: absolute;
-            width: 90%;
-            left: 5%;
+            width: 94%;
+            left: 3%;
             height: 3px;
             background: #ef4444;
             top: 50%;
@@ -44,9 +44,9 @@
             border-radius: 10px;
         }
         @keyframes scan {
-            0% { top: 25%; opacity: 0.5; }
-            50% { top: 75%; opacity: 1; }
-            100% { top: 25%; opacity: 0.5; }
+            0% { top: 20%; opacity: 0.5; }
+            50% { top: 80%; opacity: 1; }
+            100% { top: 20%; opacity: 0.5; }
         }
         .flash-success {
             animation: flash 0.4s ease-out;
@@ -64,9 +64,9 @@
         <div class="flex justify-between items-center mb-6">
             <div>
                 <h1 class="text-2xl font-black text-indigo-900 leading-tight">Barcode Pro</h1>
-                <p class="text-xs text-slate-500 font-medium">Fast & Secure Scanning</p>
+                <p class="text-xs text-slate-500 font-medium">Wide Barcode Support Enabled</p>
             </div>
-            <button onclick="unlockAudio()" id="audio-btn" class="bg-indigo-50 text-indigo-600 font-bold px-3 py-2 rounded-xl border border-indigo-100 text-sm flex items-center gap-2 active:scale-95 transition">
+            <button onclick="unlockAudio()" id="audio-btn" class="bg-indigo-50 text-indigo-600 font-bold px-3 py-2 rounded-xl border border-indigo-100 text-sm flex items-center gap-2 active:scale-95 transition shadow-sm">
                 <span>🔈</span> Sound OFF
             </button>
         </div>
@@ -75,8 +75,8 @@
         <div class="relative group">
             <div id="reader"></div>
             <div id="scan-line" class="scanning-line"></div>
-            <!-- Overlay Guide -->
-            <div class="absolute inset-0 border-[40px] border-black/30 pointer-events-none rounded-xl"></div>
+            <!-- Dynamic Overlay Guide - UI only -->
+            <div class="absolute inset-0 border-[30px] border-black/30 pointer-events-none rounded-xl"></div>
         </div>
 
         <!-- Success Message Popup -->
@@ -94,7 +94,7 @@
                     <svg width="60" height="60" viewBox="0 0 24 24" fill="white"><path d="M3 5h2V3c-1.1 0-2 .9-2 2zm0 8h2v-2H3v2zm4 8h2v-2H7v2zM3 9h2V7H3v2zm10-6h-2v2h2V3zm6 0c1.1 0 2 .9 2 2h-2V3zM5 21c-1.1 0-2-.9-2-2h2v2zm-2-4h2v-2H3v2zM9 3H7v2h2V3zm11 2h2v2h-2V5zm0 12h2v-2h-2v2zm0-8h2V7h-2v2zm0 8h2v-2h-2v2zm-4 4h2v-2h-2v2zm-4 0h2v-2h-2v2zm-8-4h2v-2H7v2z"/></svg>
                 </div>
                 <p class="text-indigo-400 text-xs font-bold uppercase tracking-widest mb-1">Barcode Number</p>
-                <p id="scanned-result" class="text-3xl font-mono font-black text-white break-all tracking-tighter"></p>
+                <p id="scanned-result" class="text-2xl font-mono font-black text-white break-all tracking-tighter text-center"></p>
             </div>
             <button onclick="resetScanner()" class="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-5 rounded-2xl transition-all shadow-xl shadow-indigo-200 active:scale-95 text-lg">
                 SCAN NEXT
@@ -103,15 +103,15 @@
 
         <!-- Smart Tips -->
         <div id="instructions" class="mt-8 space-y-3">
-            <div class="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex gap-3 items-start">
-                <span class="text-xl">🚨</span>
-                <p class="text-xs text-amber-800 font-medium leading-relaxed">
-                    Aap <b>Front Camera</b> use kar rahe hain. Barcodes ke liye piche ka camera (<b>Rear Camera</b>) best hota hai. Camera switch karein.
+            <div class="p-4 bg-indigo-50 rounded-2xl border border-indigo-100 flex gap-3 items-start">
+                <span class="text-xl">📏</span>
+                <p class="text-xs text-indigo-800 font-medium leading-relaxed">
+                    <b>Bade Barcodes ke liye:</b> Barcode ko box ke bilkul beech mein horizontal rakhein. Agar scan nahi ho raha, toh camera thoda door le jayein.
                 </p>
             </div>
             <div class="grid grid-cols-2 gap-2 text-[10px] font-bold text-slate-400 px-2 uppercase">
-                <div class="flex items-center gap-1">✅ Horizontal Pakdein</div>
-                <div class="flex items-center gap-1">✅ Focus Karein</div>
+                <div class="flex items-center gap-1">✅ Wide Box Active</div>
+                <div class="flex items-center gap-1">✅ Rear Camera Only</div>
             </div>
         </div>
     </div>
@@ -173,28 +173,40 @@
         }
 
         window.onload = function() {
-            // EAN_13 specifically for the barcode in your image
+            // Updated formats with more robust 1D support
             const formats = [
                 Html5QrcodeSupportedFormats.EAN_13,
                 Html5QrcodeSupportedFormats.CODE_128,
                 Html5QrcodeSupportedFormats.CODE_39,
                 Html5QrcodeSupportedFormats.UPC_A,
+                Html5QrcodeSupportedFormats.ITF,
                 Html5QrcodeSupportedFormats.QR_CODE
             ];
+
+            // Dynamic qrbox sizing for wide barcodes
+            const qrboxFunction = function(viewfinderWidth, viewfinderHeight) {
+                let minEdgePercentage = 0.85; // 85% of width
+                let qrboxWidth = viewfinderWidth * minEdgePercentage;
+                let qrboxHeight = 160; // Fixed height for 1D barcodes
+                return {
+                    width: qrboxWidth,
+                    height: qrboxHeight
+                };
+            }
 
             html5QrcodeScanner = new Html5QrcodeScanner(
                 "reader", 
                 { 
-                    fps: 30, // Max speed
-                    qrbox: {width: 320, height: 150}, // Barcode shape
+                    fps: 20, 
+                    qrbox: qrboxFunction,
                     aspectRatio: 1.0,
                     experimentalFeatures: {
                         useBarCodeDetectorIfSupported: true
                     },
                     videoConstraints: {
-                        facingMode: { exact: "environment" }, // Focus on BACK camera
-                        width: { min: 1280 },
-                        height: { min: 720 }
+                        facingMode: "environment", // Piche wala camera
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
                     }
                 }
             );
