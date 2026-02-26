@@ -16,9 +16,9 @@
             border: 3px solid #6366f1 !important;
             background: #000;
         }
-        /* Camera feed ko ultra-sharp karne ke liye filters */
+        /* Camera feed enhancement filters */
         #reader video {
-            filter: contrast(1.5) brightness(1.1) saturate(1.2);
+            filter: contrast(1.4) brightness(1.1) saturate(1.1);
             object-fit: cover !important;
         }
         #reader__dashboard_section_csr button {
@@ -42,9 +42,18 @@
             z-index: 20;
         }
         @keyframes scan {
-            0% { top: 15%; opacity: 0.4; }
-            50% { top: 85%; opacity: 1; }
-            100% { top: 15%; opacity: 0.4; }
+            0% { top: 20%; opacity: 0.4; }
+            50% { top: 80%; opacity: 1; }
+            100% { top: 20%; opacity: 0.4; }
+        }
+        /* Pulse effect for focus guide */
+        .focus-pulse {
+            animation: pulse 2s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0% { border-color: rgba(255, 255, 255, 0.2); }
+            50% { border-color: rgba(99, 102, 241, 0.6); }
+            100% { border-color: rgba(255, 255, 255, 0.2); }
         }
         .flash-success {
             animation: flash 0.4s ease-out;
@@ -62,9 +71,9 @@
         <div class="flex justify-between items-center mb-6">
             <div>
                 <h1 class="text-2xl font-black text-indigo-900 leading-tight">Barcode Pro</h1>
-                <p class="text-xs text-slate-500 font-medium tracking-tighter">High-Density Precision Mode</p>
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Precision Focus Active</p>
             </div>
-            <button onclick="unlockAudio()" id="audio-btn" class="bg-indigo-50 text-indigo-600 font-bold px-3 py-2 rounded-xl border border-indigo-100 text-sm flex items-center gap-2 shadow-sm">
+            <button onclick="unlockAudio()" id="audio-btn" class="bg-indigo-50 text-indigo-600 font-bold px-3 py-2 rounded-xl border border-indigo-100 text-sm flex items-center gap-2 shadow-sm active:scale-95 transition">
                 <span>🔈</span> Sound OFF
             </button>
         </div>
@@ -73,35 +82,35 @@
         <div class="relative group">
             <div id="reader"></div>
             <div id="scan-line" class="scanning-line"></div>
-            <!-- Focus Guide -->
-            <div class="absolute inset-0 border-[20px] border-black/20 pointer-events-none rounded-xl"></div>
+            <!-- Focus Guide with Pulse -->
+            <div class="absolute inset-0 border-[25px] border-black/20 focus-pulse pointer-events-none rounded-xl"></div>
         </div>
 
         <!-- Success Toast -->
         <div id="success-toast" class="hidden absolute top-20 left-1/2 -translate-x-1/2 bg-green-600 text-white px-8 py-4 rounded-2xl shadow-2xl z-50 flex flex-col items-center animate-bounce">
-            <span class="font-black text-lg">ACCURATE SCAN!</span>
+            <span class="font-black text-lg uppercase">Success!</span>
         </div>
 
         <!-- Result Card -->
         <div id="result-container" class="mt-8 hidden animate-fade-in">
             <div class="bg-slate-900 p-6 rounded-2xl shadow-inner relative">
-                <p class="text-indigo-400 text-[10px] font-bold uppercase tracking-widest mb-1">Decoded Value</p>
+                <p class="text-indigo-400 text-[10px] font-bold uppercase tracking-widest mb-1">Scanned Data</p>
                 <p id="scanned-result" class="text-xl font-mono font-black text-white break-all tracking-normal text-center"></p>
                 <div class="mt-3 flex justify-center">
-                    <span class="bg-green-500/20 text-green-400 text-[10px] px-2 py-1 rounded font-bold">VERIFIED DECODE</span>
+                    <span class="bg-green-500/20 text-green-400 text-[10px] px-2 py-1 rounded font-bold">VERIFIED</span>
                 </div>
             </div>
             <button onclick="resetScanner()" class="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-5 rounded-2xl transition-all shadow-xl active:scale-95 text-lg">
-                RETRY / NEXT
+                NEXT SCAN
             </button>
         </div>
 
         <!-- Professional Tips -->
         <div id="instructions" class="mt-8 space-y-3">
-            <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex gap-3 items-start">
-                <span class="text-xl">🎯</span>
-                <p class="text-[11px] text-blue-800 font-medium leading-relaxed">
-                    <b>Accuracy Tip:</b> Agar data galat aaye, toh camera ko thoda aur peeche le jayein aur barcode par direct roshni (reflection) se bachein. Barcode bilkul sidha hona chahiye.
+            <div class="p-4 bg-indigo-50 rounded-2xl border border-indigo-100 flex gap-3 items-start">
+                <span class="text-xl">💡</span>
+                <p class="text-[11px] text-indigo-800 font-medium leading-relaxed">
+                    <b>Focus Tip:</b> Agar barcode blur dikhe, toh phone ko dhire se <b>peeche (backwards)</b> le jayein. Bohot paas le jane se focus nahi ho pata. Barcode ko box ke bilkul beech mein rakhein.
                 </p>
             </div>
         </div>
@@ -132,7 +141,7 @@
                 oscillator.connect(gainNode);
                 gainNode.connect(audioCtx.destination);
                 oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(1500, audioCtx.currentTime); 
+                oscillator.frequency.setValueAtTime(1400, audioCtx.currentTime); 
                 gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
                 oscillator.start();
                 oscillator.stop(audioCtx.currentTime + 0.1); 
@@ -140,7 +149,6 @@
         }
 
         function onScanSuccess(decodedText, decodedResult) {
-            // Hum ek baar check karenge ki decoded text bahut chota ya garbage toh nahi
             if (decodedText.length < 4) return; 
 
             playBeep();
@@ -165,9 +173,8 @@
         }
 
         window.onload = function() {
-            // Specifically prioritizing formats for industrial barcodes
             const formats = [
-                Html5QrcodeSupportedFormats.CODE_128, // Common for serial numbers
+                Html5QrcodeSupportedFormats.CODE_128,
                 Html5QrcodeSupportedFormats.EAN_13,
                 Html5QrcodeSupportedFormats.CODE_39,
                 Html5QrcodeSupportedFormats.UPC_A,
@@ -175,24 +182,26 @@
             ];
 
             const qrboxFunction = function(viewfinderWidth, viewfinderHeight) {
-                let width = viewfinderWidth * 0.9;
-                let height = 180; // Taller box for better vertical coverage
+                let width = viewfinderWidth * 0.85; // Slightly smaller width for better focus area
+                let height = 160; 
                 return { width: width, height: height };
             }
 
             html5QrcodeScanner = new Html5QrcodeScanner(
                 "reader", 
                 { 
-                    fps: 30, // Max sampling rate
+                    fps: 40, // Increased FPS for faster capture
                     qrbox: qrboxFunction,
                     aspectRatio: 1.0,
+                    rememberLastUsedCamera: true, // Use last used camera automatically
                     experimentalFeatures: {
-                        useBarCodeDetectorIfSupported: true // Native engine use karega agar available hai
+                        useBarCodeDetectorIfSupported: true
                     },
                     videoConstraints: {
                         facingMode: "environment",
-                        width: { ideal: 1920 }, // 1080p density
-                        height: { ideal: 1080 }
+                        width: { ideal: 1280 }, // Ideal 720p to balance clarity and processing speed
+                        height: { ideal: 720 },
+                        focusMode: "continuous" // Try to force continuous focus
                     }
                 }
             );
