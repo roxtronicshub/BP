@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobile Barcode Scanner</title>
+    <title>Advanced Barcode Scanner Pro</title>
     <!-- Tailwind CSS for modern UI -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Html5-QRCode Library -->
@@ -11,90 +11,196 @@
     <style>
         #reader {
             width: 100%;
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
-            border: none !important;
+            border: 2px solid #6366f1 !important;
+            background: #000;
+        }
+        /* Camera feed ko sharp karne ke liye */
+        #reader video {
+            filter: contrast(1.2) brightness(1.1);
+            object-fit: cover !important;
         }
         #reader__dashboard_section_csr button {
             background-color: #4F46E5 !important;
             color: white !important;
-            padding: 8px 16px !important;
-            border-radius: 8px !important;
-            margin: 5px !important;
-            cursor: pointer;
+            padding: 12px 24px !important;
+            border-radius: 12px !important;
+            margin: 10px auto !important;
+            font-weight: 700;
+            display: block;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
-        #reader__status_span {
-            font-size: 14px;
-            color: #666;
+        .scanning-line {
+            position: absolute;
+            width: 90%;
+            left: 5%;
+            height: 3px;
+            background: #ef4444;
+            top: 50%;
+            box-shadow: 0 0 15px #ff0000;
+            animation: scan 1.5s infinite ease-in-out;
+            z-index: 20;
+            border-radius: 10px;
+        }
+        @keyframes scan {
+            0% { top: 25%; opacity: 0.5; }
+            50% { top: 75%; opacity: 1; }
+            100% { top: 25%; opacity: 0.5; }
+        }
+        .flash-success {
+            animation: flash 0.4s ease-out;
+        }
+        @keyframes flash {
+            0% { background-color: white; }
+            50% { background-color: #22c55e; }
+            100% { background-color: white; }
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center p-4">
+<body id="main-body" class="bg-slate-100 min-h-screen flex flex-col items-center p-4 transition-all duration-300">
 
-    <div class="max-w-md w-full bg-white rounded-2xl shadow-lg p-6 mt-10">
-        <h1 class="text-2xl font-bold text-center text-indigo-600 mb-4">Barcode Scanner</h1>
+    <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl p-6 mt-4 relative border border-slate-200">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-black text-indigo-900 leading-tight">Barcode Pro</h1>
+                <p class="text-xs text-slate-500 font-medium">Fast & Secure Scanning</p>
+            </div>
+            <button onclick="unlockAudio()" id="audio-btn" class="bg-indigo-50 text-indigo-600 font-bold px-3 py-2 rounded-xl border border-indigo-100 text-sm flex items-center gap-2 active:scale-95 transition">
+                <span>🔈</span> Sound OFF
+            </button>
+        </div>
         
         <!-- Scanner Container -->
-        <div id="reader" class="bg-black"></div>
+        <div class="relative group">
+            <div id="reader"></div>
+            <div id="scan-line" class="scanning-line"></div>
+            <!-- Overlay Guide -->
+            <div class="absolute inset-0 border-[40px] border-black/30 pointer-events-none rounded-xl"></div>
+        </div>
 
-        <!-- Result Section -->
-        <div id="result-container" class="mt-6 hidden">
-            <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Scanning Result:</h2>
-            <div id="scanned-result" class="mt-2 p-4 bg-green-50 border border-green-200 text-green-800 rounded-lg break-all font-mono">
-                <!-- Result yahan dikhega -->
+        <!-- Success Message Popup -->
+        <div id="success-toast" class="hidden absolute top-20 left-1/2 -translate-x-1/2 bg-green-600 text-white px-8 py-4 rounded-2xl shadow-2xl z-50 flex flex-col items-center gap-2 animate-bounce">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+            </svg>
+            <span class="font-black text-lg">DONE!</span>
+        </div>
+
+        <!-- Result Card -->
+        <div id="result-container" class="mt-8 hidden animate-fade-in">
+            <div class="bg-slate-900 p-6 rounded-2xl shadow-inner relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-2 opacity-10">
+                    <svg width="60" height="60" viewBox="0 0 24 24" fill="white"><path d="M3 5h2V3c-1.1 0-2 .9-2 2zm0 8h2v-2H3v2zm4 8h2v-2H7v2zM3 9h2V7H3v2zm10-6h-2v2h2V3zm6 0c1.1 0 2 .9 2 2h-2V3zM5 21c-1.1 0-2-.9-2-2h2v2zm-2-4h2v-2H3v2zM9 3H7v2h2V3zm11 2h2v2h-2V5zm0 12h2v-2h-2v2zm0-8h2V7h-2v2zm0 8h2v-2h-2v2zm-4 4h2v-2h-2v2zm-4 0h2v-2h-2v2zm-8-4h2v-2H7v2z"/></svg>
+                </div>
+                <p class="text-indigo-400 text-xs font-bold uppercase tracking-widest mb-1">Barcode Number</p>
+                <p id="scanned-result" class="text-3xl font-mono font-black text-white break-all tracking-tighter"></p>
             </div>
-            <button onclick="resetScanner()" class="mt-4 w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition">
-                Dubara Scan Karein
+            <button onclick="resetScanner()" class="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-5 rounded-2xl transition-all shadow-xl shadow-indigo-200 active:scale-95 text-lg">
+                SCAN NEXT
             </button>
         </div>
 
-        <!-- Instructions -->
-        <div id="instructions" class="mt-6 text-sm text-gray-500 text-center">
-            <p>Camera permission allow karein aur barcode ko box ke beech mein rakhein.</p>
+        <!-- Smart Tips -->
+        <div id="instructions" class="mt-8 space-y-3">
+            <div class="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex gap-3 items-start">
+                <span class="text-xl">🚨</span>
+                <p class="text-xs text-amber-800 font-medium leading-relaxed">
+                    Aap <b>Front Camera</b> use kar rahe hain. Barcodes ke liye piche ka camera (<b>Rear Camera</b>) best hota hai. Camera switch karein.
+                </p>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-[10px] font-bold text-slate-400 px-2 uppercase">
+                <div class="flex items-center gap-1">✅ Horizontal Pakdein</div>
+                <div class="flex items-center gap-1">✅ Focus Karein</div>
+            </div>
         </div>
     </div>
 
     <script>
         let html5QrcodeScanner;
+        let audioUnlocked = false;
+
+        function unlockAudio() {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            audioCtx.resume().then(() => {
+                audioUnlocked = true;
+                const btn = document.getElementById('audio-btn');
+                btn.innerHTML = "<span>🔊</span> Sound ON";
+                btn.classList.replace('bg-indigo-50', 'bg-green-50');
+                btn.classList.replace('text-indigo-600', 'text-green-600');
+                playBeep();
+            });
+        }
+        
+        function playBeep() {
+            if (!audioUnlocked) return;
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.type = 'square';
+                oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime); 
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.1); 
+            } catch (e) { console.error(e); }
+        }
 
         function onScanSuccess(decodedText, decodedResult) {
-            // Jab scan successful ho jaye
-            console.log(`Code matched = ${decodedText}`, decodedResult);
+            playBeep();
             
-            // UI Update karein
+            document.getElementById('main-body').classList.add('flash-success');
+            setTimeout(() => document.getElementById('main-body').classList.remove('flash-success'), 400);
+
+            document.getElementById('success-toast').classList.remove('hidden');
+            document.getElementById('scan-line').classList.add('hidden');
+
             document.getElementById('result-container').classList.remove('hidden');
             document.getElementById('scanned-result').innerText = decodedText;
             document.getElementById('instructions').classList.add('hidden');
-
-            // Scanner ko stop kar dena behtar hai result dikhane ke baad
-            // html5QrcodeScanner.clear(); 
-        }
-
-        function onScanFailure(error) {
-            // Har frame par failure handle karne ki zaroorat nahi hai 
-            // Kyunki scanner har milli-second scan karta hai
+            
+            html5QrcodeScanner.pause(true);
+            setTimeout(() => document.getElementById('success-toast').classList.add('hidden'), 2000);
         }
 
         function resetScanner() {
             document.getElementById('result-container').classList.add('hidden');
             document.getElementById('instructions').classList.remove('hidden');
-            document.getElementById('scanned-result').innerText = "";
+            document.getElementById('scan-line').classList.remove('hidden');
+            html5QrcodeScanner.resume();
         }
 
-        // Scanner initialize karein jab page load ho jaye
         window.onload = function() {
+            // EAN_13 specifically for the barcode in your image
+            const formats = [
+                Html5QrcodeSupportedFormats.EAN_13,
+                Html5QrcodeSupportedFormats.CODE_128,
+                Html5QrcodeSupportedFormats.CODE_39,
+                Html5QrcodeSupportedFormats.UPC_A,
+                Html5QrcodeSupportedFormats.QR_CODE
+            ];
+
             html5QrcodeScanner = new Html5QrcodeScanner(
                 "reader", 
                 { 
-                    fps: 10, 
-                    qrbox: {width: 250, height: 150}, // Barcode ke liye width zyada rakhi hai
-                    aspectRatio: 1.0
-                },
-                /* verbose= */ false
+                    fps: 30, // Max speed
+                    qrbox: {width: 320, height: 150}, // Barcode shape
+                    aspectRatio: 1.0,
+                    experimentalFeatures: {
+                        useBarCodeDetectorIfSupported: true
+                    },
+                    videoConstraints: {
+                        facingMode: { exact: "environment" }, // Focus on BACK camera
+                        width: { min: 1280 },
+                        height: { min: 720 }
+                    }
+                }
             );
-            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+            
+            html5QrcodeScanner.render(onScanSuccess, (err) => {});
         };
     </script>
-
 </body>
 </html>
