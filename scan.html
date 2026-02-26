@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Barcode Scanner - Ultra Precision</title>
+    <title>Pro Barcode Scanner - Focus & Zoom Fixed</title>
     <!-- Tailwind CSS for modern UI -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Html5-QRCode Library -->
@@ -57,6 +57,9 @@
             50% { background-color: #4ade80; }
             100% { background-color: white; }
         }
+        input[type=range] {
+            accent-color: #4F46E5;
+        }
     </style>
 </head>
 <body id="main-body" class="bg-slate-50 min-h-screen flex flex-col items-center p-4 transition-all duration-300">
@@ -65,7 +68,7 @@
         <div class="flex justify-between items-center mb-6">
             <div>
                 <h1 class="text-2xl font-black text-indigo-950 leading-tight">Barcode Pro</h1>
-                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">Torch & Accuracy Fixed</p>
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">Zoom & Auto-Focus Mode</p>
             </div>
             <div class="flex flex-col gap-2">
                 <button onclick="unlockAudio()" id="audio-btn" class="bg-indigo-50 text-indigo-700 font-bold px-3 py-2 rounded-xl border border-indigo-100 text-[10px] flex items-center gap-2 transition hover:bg-indigo-100">
@@ -87,14 +90,23 @@
             </div>
         </div>
 
-        <!-- Manual Controls (Replacing auto-scanner UI for stability) -->
+        <!-- Zoom Slider Container -->
+        <div id="zoom-container" class="hidden mb-6 px-4">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-[10px] font-bold text-slate-400 uppercase">Zoom Control</span>
+                <span id="zoom-value" class="text-[10px] font-bold text-indigo-600">1x</span>
+            </div>
+            <input type="range" id="zoom-slider" min="1" max="5" step="0.1" value="1" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer">
+        </div>
+
+        <!-- Manual Controls -->
         <div id="setup-ui" class="text-center space-y-4">
             <div id="camera-select-container" class="hidden">
-                <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Camera Chunein:</label>
+                <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block text-left px-1">Camera Chunein:</label>
                 <select id="camera-select" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none"></select>
             </div>
-            <button id="start-btn" onclick="startScanning()" class="w-full custom-btn shadow-lg shadow-indigo-200">
-                CAMERA START KAREIN
+            <button id="start-btn" onclick="startScanning()" class="w-full custom-btn shadow-lg shadow-indigo-200 uppercase tracking-widest text-sm">
+                Camera Start Karein
             </button>
         </div>
 
@@ -123,16 +135,20 @@
             <div class="p-5 bg-gradient-to-br from-slate-50 to-slate-100 rounded-[2rem] border border-slate-200">
                 <p class="text-xs text-slate-700 font-bold mb-3 flex items-center gap-2">
                     <span class="bg-indigo-600 text-white w-5 h-5 flex items-center justify-center rounded-full text-[10px]">!</span>
-                    Scanning Tips:
+                    Blur Fix Tips:
                 </p>
                 <ul class="space-y-2">
                     <li class="text-[11px] text-slate-500 flex gap-2">
-                        <span class="text-indigo-600">▶</span>
-                        Andhere mein <b>Flash ON</b> button ka use karein.
+                        <span class="text-indigo-600 font-bold">1.</span>
+                        Pass le jane par blur ho raha hai toh <b>Camera thoda door rakhein</b> (6-10 inches).
                     </li>
                     <li class="text-[11px] text-slate-500 flex gap-2">
-                        <span class="text-indigo-600">▶</span>
-                        Barcodes ko horizontal box ke beech mein rakhein.
+                        <span class="text-indigo-600 font-bold">2.</span>
+                        Naye <b>Zoom Slider</b> ka use karein taaki door se hi barcode bada dikhe.
+                    </li>
+                    <li class="text-[11px] text-slate-500 flex gap-2">
+                        <span class="text-indigo-600 font-bold">3.</span>
+                        Continuous focus on hai, camera ko 1 second ke liye steady rakhein.
                     </li>
                 </ul>
             </div>
@@ -189,6 +205,18 @@
             }
         }
 
+        async function applyZoom(value) {
+            if (!activeTrack) return;
+            try {
+                await activeTrack.applyConstraints({
+                    advanced: [{ zoom: parseFloat(value) }]
+                });
+                document.getElementById('zoom-value').innerText = `${value}x`;
+            } catch (e) {
+                console.error("Zoom failed", e);
+            }
+        }
+
         function copyToClipboard() {
             const text = document.getElementById('scanned-result').innerText;
             const el = document.createElement('textarea');
@@ -204,7 +232,13 @@
             const config = {
                 fps: 30,
                 qrbox: (w, h) => ({ width: w * 0.9, height: 160 }),
-                experimentalFeatures: { useBarCodeDetectorIfSupported: true }
+                experimentalFeatures: { useBarCodeDetectorIfSupported: true },
+                // Request continuous focus constraints
+                videoConstraints: {
+                    focusMode: "continuous",
+                    whiteBalanceMode: "continuous",
+                    exposureMode: "continuous"
+                }
             };
 
             try {
@@ -221,29 +255,32 @@
                 document.getElementById('scan-line').classList.remove('hidden');
                 document.getElementById('guide').classList.remove('hidden');
                 
-                // Optimized Torch Detection
+                // Track Detection for Torch and Zoom
                 setTimeout(() => {
                     activeTrack = html5QrCode.getRunningTrack();
                     if (activeTrack) {
-                        try {
-                            const capabilities = activeTrack.getCapabilities();
-                            if (capabilities.torch) {
-                                document.getElementById('torch-btn').classList.remove('hidden');
-                            } else {
-                                // Fallback: try to apply a dummy constraint to see if it exists
-                                activeTrack.applyConstraints({
-                                    advanced: [{ torch: false }]
-                                }).then(() => {
-                                    document.getElementById('torch-btn').classList.remove('hidden');
-                                }).catch(() => {
-                                    console.log("Torch not supported on this track");
-                                });
-                            }
-                        } catch (e) {
-                            console.log("Could not get capabilities", e);
+                        const capabilities = activeTrack.getCapabilities();
+                        
+                        // Torch detection
+                        if (capabilities.torch) {
+                            document.getElementById('torch-btn').classList.remove('hidden');
+                        }
+
+                        // Zoom detection
+                        if (capabilities.zoom) {
+                            const zoomContainer = document.getElementById('zoom-container');
+                            const zoomSlider = document.getElementById('zoom-slider');
+                            zoomContainer.classList.remove('hidden');
+                            zoomSlider.min = capabilities.zoom.min;
+                            zoomSlider.max = capabilities.zoom.max;
+                            zoomSlider.step = capabilities.zoom.step || 0.1;
+                            zoomSlider.value = activeTrack.getSettings().zoom || 1;
+                            document.getElementById('zoom-value').innerText = `${zoomSlider.value}x`;
+                            
+                            zoomSlider.oninput = (e) => applyZoom(e.target.value);
                         }
                     }
-                }, 500); // Wait for track to fully initialize
+                }, 800);
 
             } catch (err) {
                 console.error("Start failed", err);
@@ -264,6 +301,7 @@
             document.getElementById('result-container').classList.remove('hidden');
             document.getElementById('scanned-result').innerText = decodedText;
             document.getElementById('instructions').classList.add('hidden');
+            document.getElementById('zoom-container').classList.add('hidden');
             
             html5QrCode.pause();
             setTimeout(() => document.getElementById('success-toast').classList.add('hidden'), 2500);
@@ -274,6 +312,12 @@
             document.getElementById('instructions').classList.remove('hidden');
             document.getElementById('scan-line').classList.remove('hidden');
             document.getElementById('guide').classList.remove('hidden');
+            
+            // Check if zoom should be shown
+            if (activeTrack && activeTrack.getCapabilities().zoom) {
+                document.getElementById('zoom-container').classList.remove('hidden');
+            }
+            
             html5QrCode.resume();
         }
 
