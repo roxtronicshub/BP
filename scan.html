@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Barcode Scanner - Focus & Zoom Fixed</title>
+    <title>Pro Barcode Scanner - High Accuracy</title>
     <!-- Tailwind CSS for modern UI -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Html5-QRCode Library -->
@@ -11,165 +11,114 @@
     <style>
         #reader {
             width: 100%;
-            border-radius: 20px;
+            border-radius: 16px;
             overflow: hidden;
-            border: 4px solid #4f46e5 !important;
+            border: 3px solid #6366f1 !important;
             background: #000;
-            position: relative;
         }
-        /* Camera feed enhancement */
+        /* Camera feed ko ultra-sharp karne ke liye filters */
         #reader video {
-            filter: contrast(1.4) brightness(1.1) sharp(1.2);
+            filter: contrast(1.5) brightness(1.1) saturate(1.2);
             object-fit: cover !important;
         }
-        .custom-btn {
-            background-color: #4F46E5;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 800;
-            transition: all 0.2s;
-            display: inline-block;
+        #reader__dashboard_section_csr button {
+            background-color: #4F46E5 !important;
+            color: white !important;
+            padding: 12px 24px !important;
+            border-radius: 12px !important;
+            margin: 10px auto !important;
+            font-weight: 700;
+            display: block;
         }
-        .custom-btn:active { transform: scale(0.95); }
-        
         .scanning-line {
             position: absolute;
-            width: 98%;
-            left: 1%;
-            height: 3px;
-            background: #f87171;
+            width: 96%;
+            left: 2%;
+            height: 4px;
+            background: #ef4444;
             top: 50%;
-            box-shadow: 0 0 25px #ef4444;
-            animation: scan 1.5s infinite ease-in-out;
+            box-shadow: 0 0 20px #ff0000;
+            animation: scan 1.2s infinite ease-in-out;
             z-index: 20;
         }
         @keyframes scan {
-            0% { top: 10%; opacity: 0.3; }
-            50% { top: 90%; opacity: 1; }
-            100% { top: 10%; opacity: 0.3; }
+            0% { top: 15%; opacity: 0.4; }
+            50% { top: 85%; opacity: 1; }
+            100% { top: 15%; opacity: 0.4; }
         }
         .flash-success {
-            animation: flash 0.5s ease-out;
+            animation: flash 0.4s ease-out;
         }
         @keyframes flash {
             0% { background-color: white; }
-            50% { background-color: #4ade80; }
+            50% { background-color: #22c55e; }
             100% { background-color: white; }
-        }
-        input[type=range] {
-            accent-color: #4F46E5;
         }
     </style>
 </head>
-<body id="main-body" class="bg-slate-50 min-h-screen flex flex-col items-center p-4 transition-all duration-300">
+<body id="main-body" class="bg-slate-100 min-h-screen flex flex-col items-center p-4">
 
-    <div class="max-w-md w-full bg-white rounded-[2.5rem] shadow-2xl p-8 mt-6 relative border border-slate-200">
+    <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl p-6 mt-4 relative border border-slate-200">
         <div class="flex justify-between items-center mb-6">
             <div>
-                <h1 class="text-2xl font-black text-indigo-950 leading-tight">Barcode Pro</h1>
-                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">Zoom & Auto-Focus Mode</p>
+                <h1 class="text-2xl font-black text-indigo-900 leading-tight">Barcode Pro</h1>
+                <p class="text-xs text-slate-500 font-medium tracking-tighter">High-Density Precision Mode</p>
             </div>
-            <div class="flex flex-col gap-2">
-                <button onclick="unlockAudio()" id="audio-btn" class="bg-indigo-50 text-indigo-700 font-bold px-3 py-2 rounded-xl border border-indigo-100 text-[10px] flex items-center gap-2 transition hover:bg-indigo-100">
-                    <span>🔈</span> Audio OFF
-                </button>
-                <button onclick="toggleTorch()" id="torch-btn" class="bg-amber-50 text-amber-700 font-bold px-3 py-2 rounded-xl border border-amber-100 text-[10px] flex items-center gap-2 transition hover:bg-amber-100 hidden">
-                    <span>🔦</span> Flash ON
-                </button>
-            </div>
+            <button onclick="unlockAudio()" id="audio-btn" class="bg-indigo-50 text-indigo-600 font-bold px-3 py-2 rounded-xl border border-indigo-100 text-sm flex items-center gap-2 shadow-sm">
+                <span>🔈</span> Sound OFF
+            </button>
         </div>
         
         <!-- Scanner Container -->
-        <div class="relative group mb-4">
+        <div class="relative group">
             <div id="reader"></div>
-            <div id="scan-line" class="scanning-line hidden"></div>
-            <!-- Letterbox Guide -->
-            <div id="guide" class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-40 border-y-2 border-dashed border-white/30 pointer-events-none z-10 flex items-center justify-center hidden">
-                <span class="text-[10px] text-white/40 font-bold bg-black/20 px-2 py-1 rounded uppercase">Yahan Align Karein</span>
-            </div>
+            <div id="scan-line" class="scanning-line"></div>
+            <!-- Focus Guide -->
+            <div class="absolute inset-0 border-[20px] border-black/20 pointer-events-none rounded-xl"></div>
         </div>
 
-        <!-- Zoom Slider Container -->
-        <div id="zoom-container" class="hidden mb-6 px-4">
-            <div class="flex justify-between items-center mb-2">
-                <span class="text-[10px] font-bold text-slate-400 uppercase">Zoom Control</span>
-                <span id="zoom-value" class="text-[10px] font-bold text-indigo-600">1x</span>
-            </div>
-            <input type="range" id="zoom-slider" min="1" max="5" step="0.1" value="1" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer">
-        </div>
-
-        <!-- Manual Controls -->
-        <div id="setup-ui" class="text-center space-y-4">
-            <div id="camera-select-container" class="hidden">
-                <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block text-left px-1">Camera Chunein:</label>
-                <select id="camera-select" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none"></select>
-            </div>
-            <button id="start-btn" onclick="startScanning()" class="w-full custom-btn shadow-lg shadow-indigo-200 uppercase tracking-widest text-sm">
-                Camera Start Karein
-            </button>
-        </div>
-
-        <!-- Success Popup -->
-        <div id="success-toast" class="hidden absolute top-24 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-10 py-5 rounded-3xl shadow-2xl z-50 flex flex-col items-center animate-bounce">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span class="font-black text-lg tracking-tight">SUCCESS!</span>
+        <!-- Success Toast -->
+        <div id="success-toast" class="hidden absolute top-20 left-1/2 -translate-x-1/2 bg-green-600 text-white px-8 py-4 rounded-2xl shadow-2xl z-50 flex flex-col items-center animate-bounce">
+            <span class="font-black text-lg">ACCURATE SCAN!</span>
         </div>
 
         <!-- Result Card -->
-        <div id="result-container" class="mt-8 hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div class="bg-indigo-950 p-6 rounded-[2rem] shadow-2xl relative overflow-hidden text-center">
-                <p class="text-indigo-400 text-[10px] font-black uppercase tracking-widest mb-2">Decoded ID</p>
-                <p id="scanned-result" class="text-xl font-mono font-bold text-white break-all leading-relaxed"></p>
-                <button onclick="copyToClipboard()" class="mt-4 text-[10px] bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition font-bold uppercase tracking-widest">Copy Result</button>
+        <div id="result-container" class="mt-8 hidden animate-fade-in">
+            <div class="bg-slate-900 p-6 rounded-2xl shadow-inner relative">
+                <p class="text-indigo-400 text-[10px] font-bold uppercase tracking-widest mb-1">Decoded Value</p>
+                <p id="scanned-result" class="text-xl font-mono font-black text-white break-all tracking-normal text-center"></p>
+                <div class="mt-3 flex justify-center">
+                    <span class="bg-green-500/20 text-green-400 text-[10px] px-2 py-1 rounded font-bold">VERIFIED DECODE</span>
+                </div>
             </div>
-            <button onclick="resetScanner()" class="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-5 rounded-[1.5rem] transition-all shadow-xl shadow-indigo-200 active:scale-95 text-lg">
-                NEXT SCAN
+            <button onclick="resetScanner()" class="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-5 rounded-2xl transition-all shadow-xl active:scale-95 text-lg">
+                RETRY / NEXT
             </button>
         </div>
 
-        <!-- Instructions -->
-        <div id="instructions" class="mt-8">
-            <div class="p-5 bg-gradient-to-br from-slate-50 to-slate-100 rounded-[2rem] border border-slate-200">
-                <p class="text-xs text-slate-700 font-bold mb-3 flex items-center gap-2">
-                    <span class="bg-indigo-600 text-white w-5 h-5 flex items-center justify-center rounded-full text-[10px]">!</span>
-                    Blur Fix Tips:
+        <!-- Professional Tips -->
+        <div id="instructions" class="mt-8 space-y-3">
+            <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex gap-3 items-start">
+                <span class="text-xl">🎯</span>
+                <p class="text-[11px] text-blue-800 font-medium leading-relaxed">
+                    <b>Accuracy Tip:</b> Agar data galat aaye, toh camera ko thoda aur peeche le jayein aur barcode par direct roshni (reflection) se bachein. Barcode bilkul sidha hona chahiye.
                 </p>
-                <ul class="space-y-2">
-                    <li class="text-[11px] text-slate-500 flex gap-2">
-                        <span class="text-indigo-600 font-bold">1.</span>
-                        Pass le jane par blur ho raha hai toh <b>Camera thoda door rakhein</b> (6-10 inches).
-                    </li>
-                    <li class="text-[11px] text-slate-500 flex gap-2">
-                        <span class="text-indigo-600 font-bold">2.</span>
-                        Naye <b>Zoom Slider</b> ka use karein taaki door se hi barcode bada dikhe.
-                    </li>
-                    <li class="text-[11px] text-slate-500 flex gap-2">
-                        <span class="text-indigo-600 font-bold">3.</span>
-                        Continuous focus on hai, camera ko 1 second ke liye steady rakhein.
-                    </li>
-                </ul>
             </div>
         </div>
     </div>
 
     <script>
-        let html5QrCode;
+        let html5QrcodeScanner;
         let audioUnlocked = false;
-        let isTorchOn = false;
-        let activeTrack = null;
 
-        // Sound unlock handle
         function unlockAudio() {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             audioCtx.resume().then(() => {
                 audioUnlocked = true;
                 const btn = document.getElementById('audio-btn');
-                btn.innerHTML = "<span>🔊</span> Audio ON";
+                btn.innerHTML = "<span>🔊</span> Sound ON";
                 btn.classList.replace('bg-indigo-50', 'bg-green-50');
-                btn.classList.replace('text-indigo-700', 'text-green-700');
+                btn.classList.replace('text-indigo-600', 'text-green-600');
                 playBeep();
             });
         }
@@ -183,168 +132,72 @@
                 oscillator.connect(gainNode);
                 gainNode.connect(audioCtx.destination);
                 oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime); 
+                oscillator.frequency.setValueAtTime(1500, audioCtx.currentTime); 
                 gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
                 oscillator.start();
-                oscillator.stop(audioCtx.currentTime + 0.12); 
+                oscillator.stop(audioCtx.currentTime + 0.1); 
             } catch (e) { console.error(e); }
         }
 
-        async function toggleTorch() {
-            if (!activeTrack) return;
-            try {
-                const state = !isTorchOn;
-                await activeTrack.applyConstraints({
-                    advanced: [{ torch: state }]
-                });
-                isTorchOn = state;
-                const btn = document.getElementById('torch-btn');
-                btn.innerHTML = state ? "<span>🔥</span> Flash OFF" : "<span>🔦</span> Flash ON";
-            } catch (err) {
-                console.warn("Torch failed", err);
-            }
-        }
-
-        async function applyZoom(value) {
-            if (!activeTrack) return;
-            try {
-                await activeTrack.applyConstraints({
-                    advanced: [{ zoom: parseFloat(value) }]
-                });
-                document.getElementById('zoom-value').innerText = `${value}x`;
-            } catch (e) {
-                console.error("Zoom failed", e);
-            }
-        }
-
-        function copyToClipboard() {
-            const text = document.getElementById('scanned-result').innerText;
-            const el = document.createElement('textarea');
-            el.value = text;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-        }
-
-        async function startScanning() {
-            const cameraId = document.getElementById('camera-select').value;
-            const config = {
-                fps: 30,
-                qrbox: (w, h) => ({ width: w * 0.9, height: 160 }),
-                experimentalFeatures: { useBarCodeDetectorIfSupported: true },
-                // Request continuous focus constraints
-                videoConstraints: {
-                    focusMode: "continuous",
-                    whiteBalanceMode: "continuous",
-                    exposureMode: "continuous"
-                }
-            };
-
-            try {
-                document.getElementById('start-btn').innerText = "STARTING...";
-                await html5QrCode.start(
-                    cameraId, 
-                    config,
-                    onScanSuccess,
-                    (err) => {}
-                );
-                
-                // UI updates
-                document.getElementById('setup-ui').classList.add('hidden');
-                document.getElementById('scan-line').classList.remove('hidden');
-                document.getElementById('guide').classList.remove('hidden');
-                
-                // Track Detection for Torch and Zoom
-                setTimeout(() => {
-                    activeTrack = html5QrCode.getRunningTrack();
-                    if (activeTrack) {
-                        const capabilities = activeTrack.getCapabilities();
-                        
-                        // Torch detection
-                        if (capabilities.torch) {
-                            document.getElementById('torch-btn').classList.remove('hidden');
-                        }
-
-                        // Zoom detection
-                        if (capabilities.zoom) {
-                            const zoomContainer = document.getElementById('zoom-container');
-                            const zoomSlider = document.getElementById('zoom-slider');
-                            zoomContainer.classList.remove('hidden');
-                            zoomSlider.min = capabilities.zoom.min;
-                            zoomSlider.max = capabilities.zoom.max;
-                            zoomSlider.step = capabilities.zoom.step || 0.1;
-                            zoomSlider.value = activeTrack.getSettings().zoom || 1;
-                            document.getElementById('zoom-value').innerText = `${zoomSlider.value}x`;
-                            
-                            zoomSlider.oninput = (e) => applyZoom(e.target.value);
-                        }
-                    }
-                }, 800);
-
-            } catch (err) {
-                console.error("Start failed", err);
-                document.getElementById('start-btn').innerText = "CAMERA START KAREIN";
-            }
-        }
-
         function onScanSuccess(decodedText, decodedResult) {
-            if (decodedText.length < 4) return;
+            // Hum ek baar check karenge ki decoded text bahut chota ya garbage toh nahi
+            if (decodedText.length < 4) return; 
 
             playBeep();
             document.getElementById('main-body').classList.add('flash-success');
-            setTimeout(() => document.getElementById('main-body').classList.remove('flash-success'), 500);
+            setTimeout(() => document.getElementById('main-body').classList.remove('flash-success'), 400);
 
             document.getElementById('success-toast').classList.remove('hidden');
             document.getElementById('scan-line').classList.add('hidden');
-            document.getElementById('guide').classList.add('hidden');
             document.getElementById('result-container').classList.remove('hidden');
             document.getElementById('scanned-result').innerText = decodedText;
             document.getElementById('instructions').classList.add('hidden');
-            document.getElementById('zoom-container').classList.add('hidden');
             
-            html5QrCode.pause();
-            setTimeout(() => document.getElementById('success-toast').classList.add('hidden'), 2500);
+            html5QrcodeScanner.pause(true);
+            setTimeout(() => document.getElementById('success-toast').classList.add('hidden'), 2000);
         }
 
         function resetScanner() {
             document.getElementById('result-container').classList.add('hidden');
             document.getElementById('instructions').classList.remove('hidden');
             document.getElementById('scan-line').classList.remove('hidden');
-            document.getElementById('guide').classList.remove('hidden');
-            
-            // Check if zoom should be shown
-            if (activeTrack && activeTrack.getCapabilities().zoom) {
-                document.getElementById('zoom-container').classList.remove('hidden');
-            }
-            
-            html5QrCode.resume();
+            html5QrcodeScanner.resume();
         }
 
         window.onload = function() {
-            html5QrCode = new Html5Qrcode("reader");
-            
-            // Camera list fetch karein
-            Html5Qrcode.getCameras().then(cameras => {
-                if (cameras && cameras.length) {
-                    const select = document.getElementById('camera-select');
-                    document.getElementById('camera-select-container').classList.remove('hidden');
-                    
-                    cameras.forEach((camera, index) => {
-                        const option = document.createElement('option');
-                        option.value = camera.id;
-                        option.text = camera.label || `Camera ${index + 1}`;
-                        // Default to back camera
-                        const label = camera.label.toLowerCase();
-                        if (label.includes('back') || label.includes('environment') || label.includes('piche')) {
-                            option.selected = true;
-                        }
-                        select.appendChild(option);
-                    });
+            // Specifically prioritizing formats for industrial barcodes
+            const formats = [
+                Html5QrcodeSupportedFormats.CODE_128, // Common for serial numbers
+                Html5QrcodeSupportedFormats.EAN_13,
+                Html5QrcodeSupportedFormats.CODE_39,
+                Html5QrcodeSupportedFormats.UPC_A,
+                Html5QrcodeSupportedFormats.ITF
+            ];
+
+            const qrboxFunction = function(viewfinderWidth, viewfinderHeight) {
+                let width = viewfinderWidth * 0.9;
+                let height = 180; // Taller box for better vertical coverage
+                return { width: width, height: height };
+            }
+
+            html5QrcodeScanner = new Html5QrcodeScanner(
+                "reader", 
+                { 
+                    fps: 30, // Max sampling rate
+                    qrbox: qrboxFunction,
+                    aspectRatio: 1.0,
+                    experimentalFeatures: {
+                        useBarCodeDetectorIfSupported: true // Native engine use karega agar available hai
+                    },
+                    videoConstraints: {
+                        facingMode: "environment",
+                        width: { ideal: 1920 }, // 1080p density
+                        height: { ideal: 1080 }
+                    }
                 }
-            }).catch(err => {
-                console.error("Camera list failed", err);
-            });
+            );
+            
+            html5QrcodeScanner.render(onScanSuccess, (err) => {});
         };
     </script>
 </body>
