@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Barcode Scanner - High Accuracy</title>
+    <title>Pro Barcode Scanner - Ultra Precision</title>
     <!-- Tailwind CSS for modern UI -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Html5-QRCode Library -->
@@ -11,114 +11,149 @@
     <style>
         #reader {
             width: 100%;
-            border-radius: 16px;
+            border-radius: 20px;
             overflow: hidden;
-            border: 3px solid #6366f1 !important;
+            border: 4px solid #4f46e5 !important;
             background: #000;
+            position: relative;
         }
-        /* Camera feed ko ultra-sharp karne ke liye filters */
+        /* Camera feed enhancement */
         #reader video {
-            filter: contrast(1.5) brightness(1.1) saturate(1.2);
+            filter: contrast(1.4) brightness(1.1) sharp(1.2);
             object-fit: cover !important;
         }
-        #reader__dashboard_section_csr button {
-            background-color: #4F46E5 !important;
-            color: white !important;
-            padding: 12px 24px !important;
-            border-radius: 12px !important;
-            margin: 10px auto !important;
-            font-weight: 700;
-            display: block;
+        .custom-btn {
+            background-color: #4F46E5;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 800;
+            transition: all 0.2s;
+            display: inline-block;
         }
+        .custom-btn:active { transform: scale(0.95); }
+        
         .scanning-line {
             position: absolute;
-            width: 96%;
-            left: 2%;
-            height: 4px;
-            background: #ef4444;
+            width: 98%;
+            left: 1%;
+            height: 3px;
+            background: #f87171;
             top: 50%;
-            box-shadow: 0 0 20px #ff0000;
-            animation: scan 1.2s infinite ease-in-out;
+            box-shadow: 0 0 25px #ef4444;
+            animation: scan 1.5s infinite ease-in-out;
             z-index: 20;
         }
         @keyframes scan {
-            0% { top: 15%; opacity: 0.4; }
-            50% { top: 85%; opacity: 1; }
-            100% { top: 15%; opacity: 0.4; }
+            0% { top: 10%; opacity: 0.3; }
+            50% { top: 90%; opacity: 1; }
+            100% { top: 10%; opacity: 0.3; }
         }
         .flash-success {
-            animation: flash 0.4s ease-out;
+            animation: flash 0.5s ease-out;
         }
         @keyframes flash {
             0% { background-color: white; }
-            50% { background-color: #22c55e; }
+            50% { background-color: #4ade80; }
             100% { background-color: white; }
         }
     </style>
 </head>
-<body id="main-body" class="bg-slate-100 min-h-screen flex flex-col items-center p-4">
+<body id="main-body" class="bg-slate-50 min-h-screen flex flex-col items-center p-4 transition-all duration-300">
 
-    <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl p-6 mt-4 relative border border-slate-200">
+    <div class="max-w-md w-full bg-white rounded-[2.5rem] shadow-2xl p-8 mt-6 relative border border-slate-200">
         <div class="flex justify-between items-center mb-6">
             <div>
-                <h1 class="text-2xl font-black text-indigo-900 leading-tight">Barcode Pro</h1>
-                <p class="text-xs text-slate-500 font-medium tracking-tighter">High-Density Precision Mode</p>
+                <h1 class="text-2xl font-black text-indigo-950 leading-tight">Barcode Pro</h1>
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">Torch & Accuracy Fixed</p>
             </div>
-            <button onclick="unlockAudio()" id="audio-btn" class="bg-indigo-50 text-indigo-600 font-bold px-3 py-2 rounded-xl border border-indigo-100 text-sm flex items-center gap-2 shadow-sm">
-                <span>🔈</span> Sound OFF
-            </button>
+            <div class="flex flex-col gap-2">
+                <button onclick="unlockAudio()" id="audio-btn" class="bg-indigo-50 text-indigo-700 font-bold px-3 py-2 rounded-xl border border-indigo-100 text-[10px] flex items-center gap-2 transition hover:bg-indigo-100">
+                    <span>🔈</span> Audio OFF
+                </button>
+                <button onclick="toggleTorch()" id="torch-btn" class="bg-amber-50 text-amber-700 font-bold px-3 py-2 rounded-xl border border-amber-100 text-[10px] flex items-center gap-2 transition hover:bg-amber-100 hidden">
+                    <span>🔦</span> Flash ON
+                </button>
+            </div>
         </div>
         
         <!-- Scanner Container -->
-        <div class="relative group">
+        <div class="relative group mb-4">
             <div id="reader"></div>
-            <div id="scan-line" class="scanning-line"></div>
-            <!-- Focus Guide -->
-            <div class="absolute inset-0 border-[20px] border-black/20 pointer-events-none rounded-xl"></div>
-        </div>
-
-        <!-- Success Toast -->
-        <div id="success-toast" class="hidden absolute top-20 left-1/2 -translate-x-1/2 bg-green-600 text-white px-8 py-4 rounded-2xl shadow-2xl z-50 flex flex-col items-center animate-bounce">
-            <span class="font-black text-lg">ACCURATE SCAN!</span>
-        </div>
-
-        <!-- Result Card -->
-        <div id="result-container" class="mt-8 hidden animate-fade-in">
-            <div class="bg-slate-900 p-6 rounded-2xl shadow-inner relative">
-                <p class="text-indigo-400 text-[10px] font-bold uppercase tracking-widest mb-1">Decoded Value</p>
-                <p id="scanned-result" class="text-xl font-mono font-black text-white break-all tracking-normal text-center"></p>
-                <div class="mt-3 flex justify-center">
-                    <span class="bg-green-500/20 text-green-400 text-[10px] px-2 py-1 rounded font-bold">VERIFIED DECODE</span>
-                </div>
+            <div id="scan-line" class="scanning-line hidden"></div>
+            <!-- Letterbox Guide -->
+            <div id="guide" class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-40 border-y-2 border-dashed border-white/30 pointer-events-none z-10 flex items-center justify-center hidden">
+                <span class="text-[10px] text-white/40 font-bold bg-black/20 px-2 py-1 rounded uppercase">Yahan Align Karein</span>
             </div>
-            <button onclick="resetScanner()" class="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-5 rounded-2xl transition-all shadow-xl active:scale-95 text-lg">
-                RETRY / NEXT
+        </div>
+
+        <!-- Manual Controls (Replacing auto-scanner UI for stability) -->
+        <div id="setup-ui" class="text-center space-y-4">
+            <div id="camera-select-container" class="hidden">
+                <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Camera Chunein:</label>
+                <select id="camera-select" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none"></select>
+            </div>
+            <button id="start-btn" onclick="startScanning()" class="w-full custom-btn shadow-lg shadow-indigo-200">
+                CAMERA START KAREIN
             </button>
         </div>
 
-        <!-- Professional Tips -->
-        <div id="instructions" class="mt-8 space-y-3">
-            <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex gap-3 items-start">
-                <span class="text-xl">🎯</span>
-                <p class="text-[11px] text-blue-800 font-medium leading-relaxed">
-                    <b>Accuracy Tip:</b> Agar data galat aaye, toh camera ko thoda aur peeche le jayein aur barcode par direct roshni (reflection) se bachein. Barcode bilkul sidha hona chahiye.
+        <!-- Success Popup -->
+        <div id="success-toast" class="hidden absolute top-24 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-10 py-5 rounded-3xl shadow-2xl z-50 flex flex-col items-center animate-bounce">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span class="font-black text-lg tracking-tight">SUCCESS!</span>
+        </div>
+
+        <!-- Result Card -->
+        <div id="result-container" class="mt-8 hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div class="bg-indigo-950 p-6 rounded-[2rem] shadow-2xl relative overflow-hidden text-center">
+                <p class="text-indigo-400 text-[10px] font-black uppercase tracking-widest mb-2">Decoded ID</p>
+                <p id="scanned-result" class="text-xl font-mono font-bold text-white break-all leading-relaxed"></p>
+                <button onclick="copyToClipboard()" class="mt-4 text-[10px] bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition font-bold uppercase tracking-widest">Copy Result</button>
+            </div>
+            <button onclick="resetScanner()" class="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-5 rounded-[1.5rem] transition-all shadow-xl shadow-indigo-200 active:scale-95 text-lg">
+                NEXT SCAN
+            </button>
+        </div>
+
+        <!-- Instructions -->
+        <div id="instructions" class="mt-8">
+            <div class="p-5 bg-gradient-to-br from-slate-50 to-slate-100 rounded-[2rem] border border-slate-200">
+                <p class="text-xs text-slate-700 font-bold mb-3 flex items-center gap-2">
+                    <span class="bg-indigo-600 text-white w-5 h-5 flex items-center justify-center rounded-full text-[10px]">!</span>
+                    Scanning Tips:
                 </p>
+                <ul class="space-y-2">
+                    <li class="text-[11px] text-slate-500 flex gap-2">
+                        <span class="text-indigo-600">▶</span>
+                        Andhere mein <b>Flash ON</b> button ka use karein.
+                    </li>
+                    <li class="text-[11px] text-slate-500 flex gap-2">
+                        <span class="text-indigo-600">▶</span>
+                        Barcodes ko horizontal box ke beech mein rakhein.
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
 
     <script>
-        let html5QrcodeScanner;
+        let html5QrCode;
         let audioUnlocked = false;
+        let isTorchOn = false;
+        let activeTrack = null;
 
+        // Sound unlock handle
         function unlockAudio() {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             audioCtx.resume().then(() => {
                 audioUnlocked = true;
                 const btn = document.getElementById('audio-btn');
-                btn.innerHTML = "<span>🔊</span> Sound ON";
+                btn.innerHTML = "<span>🔊</span> Audio ON";
                 btn.classList.replace('bg-indigo-50', 'bg-green-50');
-                btn.classList.replace('text-indigo-600', 'text-green-600');
+                btn.classList.replace('text-indigo-700', 'text-green-700');
                 playBeep();
             });
         }
@@ -132,72 +167,123 @@
                 oscillator.connect(gainNode);
                 gainNode.connect(audioCtx.destination);
                 oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(1500, audioCtx.currentTime); 
+                oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime); 
                 gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
                 oscillator.start();
-                oscillator.stop(audioCtx.currentTime + 0.1); 
+                oscillator.stop(audioCtx.currentTime + 0.12); 
             } catch (e) { console.error(e); }
         }
 
+        async function toggleTorch() {
+            if (!activeTrack) return;
+            try {
+                const state = !isTorchOn;
+                await activeTrack.applyConstraints({
+                    advanced: [{ torch: state }]
+                });
+                isTorchOn = state;
+                const btn = document.getElementById('torch-btn');
+                btn.innerHTML = state ? "<span>🔥</span> Flash OFF" : "<span>🔦</span> Flash ON";
+            } catch (err) {
+                console.warn("Torch failed", err);
+            }
+        }
+
+        function copyToClipboard() {
+            const text = document.getElementById('scanned-result').innerText;
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+        }
+
+        async function startScanning() {
+            const cameraId = document.getElementById('camera-select').value;
+            const config = {
+                fps: 30,
+                qrbox: (w, h) => ({ width: w * 0.9, height: 160 }),
+                experimentalFeatures: { useBarCodeDetectorIfSupported: true }
+            };
+
+            try {
+                document.getElementById('start-btn').innerText = "STARTING...";
+                await html5QrCode.start(
+                    cameraId, 
+                    config,
+                    onScanSuccess,
+                    (err) => {}
+                );
+                
+                // UI updates
+                document.getElementById('setup-ui').classList.add('hidden');
+                document.getElementById('scan-line').classList.remove('hidden');
+                document.getElementById('guide').classList.remove('hidden');
+                
+                // Get the track for torch
+                activeTrack = html5QrCode.getRunningTrack();
+                if (activeTrack) {
+                    const capabilities = activeTrack.getCapabilities();
+                    if (capabilities.torch) {
+                        document.getElementById('torch-btn').classList.remove('hidden');
+                    }
+                }
+            } catch (err) {
+                console.error("Start failed", err);
+                document.getElementById('start-btn').innerText = "CAMERA START KAREIN";
+            }
+        }
+
         function onScanSuccess(decodedText, decodedResult) {
-            // Hum ek baar check karenge ki decoded text bahut chota ya garbage toh nahi
-            if (decodedText.length < 4) return; 
+            if (decodedText.length < 4) return;
 
             playBeep();
             document.getElementById('main-body').classList.add('flash-success');
-            setTimeout(() => document.getElementById('main-body').classList.remove('flash-success'), 400);
+            setTimeout(() => document.getElementById('main-body').classList.remove('flash-success'), 500);
 
             document.getElementById('success-toast').classList.remove('hidden');
             document.getElementById('scan-line').classList.add('hidden');
+            document.getElementById('guide').classList.add('hidden');
             document.getElementById('result-container').classList.remove('hidden');
             document.getElementById('scanned-result').innerText = decodedText;
             document.getElementById('instructions').classList.add('hidden');
             
-            html5QrcodeScanner.pause(true);
-            setTimeout(() => document.getElementById('success-toast').classList.add('hidden'), 2000);
+            html5QrCode.pause();
+            setTimeout(() => document.getElementById('success-toast').classList.add('hidden'), 2500);
         }
 
         function resetScanner() {
             document.getElementById('result-container').classList.add('hidden');
             document.getElementById('instructions').classList.remove('hidden');
             document.getElementById('scan-line').classList.remove('hidden');
-            html5QrcodeScanner.resume();
+            document.getElementById('guide').classList.remove('hidden');
+            html5QrCode.resume();
         }
 
         window.onload = function() {
-            // Specifically prioritizing formats for industrial barcodes
-            const formats = [
-                Html5QrcodeSupportedFormats.CODE_128, // Common for serial numbers
-                Html5QrcodeSupportedFormats.EAN_13,
-                Html5QrcodeSupportedFormats.CODE_39,
-                Html5QrcodeSupportedFormats.UPC_A,
-                Html5QrcodeSupportedFormats.ITF
-            ];
-
-            const qrboxFunction = function(viewfinderWidth, viewfinderHeight) {
-                let width = viewfinderWidth * 0.9;
-                let height = 180; // Taller box for better vertical coverage
-                return { width: width, height: height };
-            }
-
-            html5QrcodeScanner = new Html5QrcodeScanner(
-                "reader", 
-                { 
-                    fps: 30, // Max sampling rate
-                    qrbox: qrboxFunction,
-                    aspectRatio: 1.0,
-                    experimentalFeatures: {
-                        useBarCodeDetectorIfSupported: true // Native engine use karega agar available hai
-                    },
-                    videoConstraints: {
-                        facingMode: "environment",
-                        width: { ideal: 1920 }, // 1080p density
-                        height: { ideal: 1080 }
-                    }
-                }
-            );
+            html5QrCode = new Html5Qrcode("reader");
             
-            html5QrcodeScanner.render(onScanSuccess, (err) => {});
+            // Camera list fetch karein
+            Html5Qrcode.getCameras().then(cameras => {
+                if (cameras && cameras.length) {
+                    const select = document.getElementById('camera-select');
+                    document.getElementById('camera-select-container').classList.remove('hidden');
+                    
+                    cameras.forEach((camera, index) => {
+                        const option = document.createElement('option');
+                        option.value = camera.id;
+                        option.text = camera.label || `Camera ${index + 1}`;
+                        // Default to back camera
+                        if (camera.label.toLowerCase().includes('back') || camera.label.toLowerCase().includes('environment')) {
+                            option.selected = true;
+                        }
+                        select.appendChild(option);
+                    });
+                }
+            }).catch(err => {
+                console.error("Camera list failed", err);
+            });
         };
     </script>
 </body>
