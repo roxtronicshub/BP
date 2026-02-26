@@ -221,14 +221,30 @@
                 document.getElementById('scan-line').classList.remove('hidden');
                 document.getElementById('guide').classList.remove('hidden');
                 
-                // Get the track for torch
-                activeTrack = html5QrCode.getRunningTrack();
-                if (activeTrack) {
-                    const capabilities = activeTrack.getCapabilities();
-                    if (capabilities.torch) {
-                        document.getElementById('torch-btn').classList.remove('hidden');
+                // Optimized Torch Detection
+                setTimeout(() => {
+                    activeTrack = html5QrCode.getRunningTrack();
+                    if (activeTrack) {
+                        try {
+                            const capabilities = activeTrack.getCapabilities();
+                            if (capabilities.torch) {
+                                document.getElementById('torch-btn').classList.remove('hidden');
+                            } else {
+                                // Fallback: try to apply a dummy constraint to see if it exists
+                                activeTrack.applyConstraints({
+                                    advanced: [{ torch: false }]
+                                }).then(() => {
+                                    document.getElementById('torch-btn').classList.remove('hidden');
+                                }).catch(() => {
+                                    console.log("Torch not supported on this track");
+                                });
+                            }
+                        } catch (e) {
+                            console.log("Could not get capabilities", e);
+                        }
                     }
-                }
+                }, 500); // Wait for track to fully initialize
+
             } catch (err) {
                 console.error("Start failed", err);
                 document.getElementById('start-btn').innerText = "CAMERA START KAREIN";
@@ -275,7 +291,8 @@
                         option.value = camera.id;
                         option.text = camera.label || `Camera ${index + 1}`;
                         // Default to back camera
-                        if (camera.label.toLowerCase().includes('back') || camera.label.toLowerCase().includes('environment')) {
+                        const label = camera.label.toLowerCase();
+                        if (label.includes('back') || label.includes('environment') || label.includes('piche')) {
                             option.selected = true;
                         }
                         select.appendChild(option);
