@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Barcode Scanner Pro</title>
+    <title>Pro Barcode Scanner - High Accuracy</title>
     <!-- Tailwind CSS for modern UI -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Html5-QRCode Library -->
@@ -13,12 +13,12 @@
             width: 100%;
             border-radius: 16px;
             overflow: hidden;
-            border: 2px solid #6366f1 !important;
+            border: 3px solid #6366f1 !important;
             background: #000;
         }
-        /* Camera feed ko sharp karne ke liye */
+        /* Camera feed ko ultra-sharp karne ke liye filters */
         #reader video {
-            filter: contrast(1.3) brightness(1.1) sharp(1.1);
+            filter: contrast(1.5) brightness(1.1) saturate(1.2);
             object-fit: cover !important;
         }
         #reader__dashboard_section_csr button {
@@ -29,24 +29,22 @@
             margin: 10px auto !important;
             font-weight: 700;
             display: block;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
         .scanning-line {
             position: absolute;
-            width: 94%;
-            left: 3%;
-            height: 3px;
+            width: 96%;
+            left: 2%;
+            height: 4px;
             background: #ef4444;
             top: 50%;
-            box-shadow: 0 0 15px #ff0000;
-            animation: scan 1.5s infinite ease-in-out;
+            box-shadow: 0 0 20px #ff0000;
+            animation: scan 1.2s infinite ease-in-out;
             z-index: 20;
-            border-radius: 10px;
         }
         @keyframes scan {
-            0% { top: 20%; opacity: 0.5; }
-            50% { top: 80%; opacity: 1; }
-            100% { top: 20%; opacity: 0.5; }
+            0% { top: 15%; opacity: 0.4; }
+            50% { top: 85%; opacity: 1; }
+            100% { top: 15%; opacity: 0.4; }
         }
         .flash-success {
             animation: flash 0.4s ease-out;
@@ -58,15 +56,15 @@
         }
     </style>
 </head>
-<body id="main-body" class="bg-slate-100 min-h-screen flex flex-col items-center p-4 transition-all duration-300">
+<body id="main-body" class="bg-slate-100 min-h-screen flex flex-col items-center p-4">
 
     <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl p-6 mt-4 relative border border-slate-200">
         <div class="flex justify-between items-center mb-6">
             <div>
                 <h1 class="text-2xl font-black text-indigo-900 leading-tight">Barcode Pro</h1>
-                <p class="text-xs text-slate-500 font-medium">Wide Barcode Support Enabled</p>
+                <p class="text-xs text-slate-500 font-medium tracking-tighter">High-Density Precision Mode</p>
             </div>
-            <button onclick="unlockAudio()" id="audio-btn" class="bg-indigo-50 text-indigo-600 font-bold px-3 py-2 rounded-xl border border-indigo-100 text-sm flex items-center gap-2 active:scale-95 transition shadow-sm">
+            <button onclick="unlockAudio()" id="audio-btn" class="bg-indigo-50 text-indigo-600 font-bold px-3 py-2 rounded-xl border border-indigo-100 text-sm flex items-center gap-2 shadow-sm">
                 <span>🔈</span> Sound OFF
             </button>
         </div>
@@ -75,43 +73,36 @@
         <div class="relative group">
             <div id="reader"></div>
             <div id="scan-line" class="scanning-line"></div>
-            <!-- Dynamic Overlay Guide - UI only -->
-            <div class="absolute inset-0 border-[30px] border-black/30 pointer-events-none rounded-xl"></div>
+            <!-- Focus Guide -->
+            <div class="absolute inset-0 border-[20px] border-black/20 pointer-events-none rounded-xl"></div>
         </div>
 
-        <!-- Success Message Popup -->
-        <div id="success-toast" class="hidden absolute top-20 left-1/2 -translate-x-1/2 bg-green-600 text-white px-8 py-4 rounded-2xl shadow-2xl z-50 flex flex-col items-center gap-2 animate-bounce">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-            </svg>
-            <span class="font-black text-lg">DONE!</span>
+        <!-- Success Toast -->
+        <div id="success-toast" class="hidden absolute top-20 left-1/2 -translate-x-1/2 bg-green-600 text-white px-8 py-4 rounded-2xl shadow-2xl z-50 flex flex-col items-center animate-bounce">
+            <span class="font-black text-lg">ACCURATE SCAN!</span>
         </div>
 
         <!-- Result Card -->
         <div id="result-container" class="mt-8 hidden animate-fade-in">
-            <div class="bg-slate-900 p-6 rounded-2xl shadow-inner relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-2 opacity-10">
-                    <svg width="60" height="60" viewBox="0 0 24 24" fill="white"><path d="M3 5h2V3c-1.1 0-2 .9-2 2zm0 8h2v-2H3v2zm4 8h2v-2H7v2zM3 9h2V7H3v2zm10-6h-2v2h2V3zm6 0c1.1 0 2 .9 2 2h-2V3zM5 21c-1.1 0-2-.9-2-2h2v2zm-2-4h2v-2H3v2zM9 3H7v2h2V3zm11 2h2v2h-2V5zm0 12h2v-2h-2v2zm0-8h2V7h-2v2zm0 8h2v-2h-2v2zm-4 4h2v-2h-2v2zm-4 0h2v-2h-2v2zm-8-4h2v-2H7v2z"/></svg>
+            <div class="bg-slate-900 p-6 rounded-2xl shadow-inner relative">
+                <p class="text-indigo-400 text-[10px] font-bold uppercase tracking-widest mb-1">Decoded Value</p>
+                <p id="scanned-result" class="text-xl font-mono font-black text-white break-all tracking-normal text-center"></p>
+                <div class="mt-3 flex justify-center">
+                    <span class="bg-green-500/20 text-green-400 text-[10px] px-2 py-1 rounded font-bold">VERIFIED DECODE</span>
                 </div>
-                <p class="text-indigo-400 text-xs font-bold uppercase tracking-widest mb-1">Barcode Number</p>
-                <p id="scanned-result" class="text-2xl font-mono font-black text-white break-all tracking-tighter text-center"></p>
             </div>
-            <button onclick="resetScanner()" class="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-5 rounded-2xl transition-all shadow-xl shadow-indigo-200 active:scale-95 text-lg">
-                SCAN NEXT
+            <button onclick="resetScanner()" class="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-5 rounded-2xl transition-all shadow-xl active:scale-95 text-lg">
+                RETRY / NEXT
             </button>
         </div>
 
-        <!-- Smart Tips -->
+        <!-- Professional Tips -->
         <div id="instructions" class="mt-8 space-y-3">
-            <div class="p-4 bg-indigo-50 rounded-2xl border border-indigo-100 flex gap-3 items-start">
-                <span class="text-xl">📏</span>
-                <p class="text-xs text-indigo-800 font-medium leading-relaxed">
-                    <b>Bade Barcodes ke liye:</b> Barcode ko box ke bilkul beech mein horizontal rakhein. Agar scan nahi ho raha, toh camera thoda door le jayein.
+            <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex gap-3 items-start">
+                <span class="text-xl">🎯</span>
+                <p class="text-[11px] text-blue-800 font-medium leading-relaxed">
+                    <b>Accuracy Tip:</b> Agar data galat aaye, toh camera ko thoda aur peeche le jayein aur barcode par direct roshni (reflection) se bachein. Barcode bilkul sidha hona chahiye.
                 </p>
-            </div>
-            <div class="grid grid-cols-2 gap-2 text-[10px] font-bold text-slate-400 px-2 uppercase">
-                <div class="flex items-center gap-1">✅ Wide Box Active</div>
-                <div class="flex items-center gap-1">✅ Rear Camera Only</div>
             </div>
         </div>
     </div>
@@ -140,8 +131,8 @@
                 const gainNode = audioCtx.createGain();
                 oscillator.connect(gainNode);
                 gainNode.connect(audioCtx.destination);
-                oscillator.type = 'square';
-                oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime); 
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(1500, audioCtx.currentTime); 
                 gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
                 oscillator.start();
                 oscillator.stop(audioCtx.currentTime + 0.1); 
@@ -149,14 +140,15 @@
         }
 
         function onScanSuccess(decodedText, decodedResult) {
+            // Hum ek baar check karenge ki decoded text bahut chota ya garbage toh nahi
+            if (decodedText.length < 4) return; 
+
             playBeep();
-            
             document.getElementById('main-body').classList.add('flash-success');
             setTimeout(() => document.getElementById('main-body').classList.remove('flash-success'), 400);
 
             document.getElementById('success-toast').classList.remove('hidden');
             document.getElementById('scan-line').classList.add('hidden');
-
             document.getElementById('result-container').classList.remove('hidden');
             document.getElementById('scanned-result').innerText = decodedText;
             document.getElementById('instructions').classList.add('hidden');
@@ -173,40 +165,34 @@
         }
 
         window.onload = function() {
-            // Updated formats with more robust 1D support
+            // Specifically prioritizing formats for industrial barcodes
             const formats = [
+                Html5QrcodeSupportedFormats.CODE_128, // Common for serial numbers
                 Html5QrcodeSupportedFormats.EAN_13,
-                Html5QrcodeSupportedFormats.CODE_128,
                 Html5QrcodeSupportedFormats.CODE_39,
                 Html5QrcodeSupportedFormats.UPC_A,
-                Html5QrcodeSupportedFormats.ITF,
-                Html5QrcodeSupportedFormats.QR_CODE
+                Html5QrcodeSupportedFormats.ITF
             ];
 
-            // Dynamic qrbox sizing for wide barcodes
             const qrboxFunction = function(viewfinderWidth, viewfinderHeight) {
-                let minEdgePercentage = 0.85; // 85% of width
-                let qrboxWidth = viewfinderWidth * minEdgePercentage;
-                let qrboxHeight = 160; // Fixed height for 1D barcodes
-                return {
-                    width: qrboxWidth,
-                    height: qrboxHeight
-                };
+                let width = viewfinderWidth * 0.9;
+                let height = 180; // Taller box for better vertical coverage
+                return { width: width, height: height };
             }
 
             html5QrcodeScanner = new Html5QrcodeScanner(
                 "reader", 
                 { 
-                    fps: 20, 
+                    fps: 30, // Max sampling rate
                     qrbox: qrboxFunction,
                     aspectRatio: 1.0,
                     experimentalFeatures: {
-                        useBarCodeDetectorIfSupported: true
+                        useBarCodeDetectorIfSupported: true // Native engine use karega agar available hai
                     },
                     videoConstraints: {
-                        facingMode: "environment", // Piche wala camera
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
+                        facingMode: "environment",
+                        width: { ideal: 1920 }, // 1080p density
+                        height: { ideal: 1080 }
                     }
                 }
             );
