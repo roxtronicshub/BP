@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Barcode Scanner</title>
+    <!-- Tailwind CSS for modern UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Html5-QRCode Library -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        #reader {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            border: none !important;
+        }
+        #reader__dashboard_section_csr button {
+            background-color: #4F46E5 !important;
+            color: white !important;
+            padding: 8px 16px !important;
+            border-radius: 8px !important;
+            margin: 5px !important;
+            cursor: pointer;
+        }
+        #reader__status_span {
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-4">
+
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-lg p-6 mt-10">
+        <h1 class="text-2xl font-bold text-center text-indigo-600 mb-4">Barcode Scanner</h1>
+        
+        <!-- Scanner Container -->
+        <div id="reader" class="bg-black"></div>
+
+        <!-- Result Section -->
+        <div id="result-container" class="mt-6 hidden">
+            <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Scanning Result:</h2>
+            <div id="scanned-result" class="mt-2 p-4 bg-green-50 border border-green-200 text-green-800 rounded-lg break-all font-mono">
+                <!-- Result yahan dikhega -->
+            </div>
+            <button onclick="resetScanner()" class="mt-4 w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition">
+                Dubara Scan Karein
+            </button>
+        </div>
+
+        <!-- Instructions -->
+        <div id="instructions" class="mt-6 text-sm text-gray-500 text-center">
+            <p>Camera permission allow karein aur barcode ko box ke beech mein rakhein.</p>
+        </div>
+    </div>
+
+    <script>
+        let html5QrcodeScanner;
+
+        function onScanSuccess(decodedText, decodedResult) {
+            // Jab scan successful ho jaye
+            console.log(`Code matched = ${decodedText}`, decodedResult);
+            
+            // UI Update karein
+            document.getElementById('result-container').classList.remove('hidden');
+            document.getElementById('scanned-result').innerText = decodedText;
+            document.getElementById('instructions').classList.add('hidden');
+
+            // Scanner ko stop kar dena behtar hai result dikhane ke baad
+            // html5QrcodeScanner.clear(); 
+        }
+
+        function onScanFailure(error) {
+            // Har frame par failure handle karne ki zaroorat nahi hai 
+            // Kyunki scanner har milli-second scan karta hai
+        }
+
+        function resetScanner() {
+            document.getElementById('result-container').classList.add('hidden');
+            document.getElementById('instructions').classList.remove('hidden');
+            document.getElementById('scanned-result').innerText = "";
+        }
+
+        // Scanner initialize karein jab page load ho jaye
+        window.onload = function() {
+            html5QrcodeScanner = new Html5QrcodeScanner(
+                "reader", 
+                { 
+                    fps: 10, 
+                    qrbox: {width: 250, height: 150}, // Barcode ke liye width zyada rakhi hai
+                    aspectRatio: 1.0
+                },
+                /* verbose= */ false
+            );
+            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        };
+    </script>
+
+</body>
+</html>
