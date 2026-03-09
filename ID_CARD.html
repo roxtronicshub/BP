@@ -354,6 +354,12 @@
                             <!-- Video Element -->
                             <video id="videoElement" autoplay playsinline class="w-full h-full object-cover hidden-step absolute top-0 left-0 z-10"></video>
                             
+                            <!-- NEW: Camera Overlay Guide for Passport Size -->
+                            <div id="camera-guide" class="hidden-step absolute inset-0 z-[15] pointer-events-none flex flex-col items-center justify-center overflow-hidden">
+                                <div class="w-44 h-44 border-2 border-white border-dashed rounded-xl relative" style="box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);"></div>
+                                <p class="text-white text-xs mt-3 font-semibold drop-shadow-md z-20">Align face inside the frame</p>
+                            </div>
+
                             <!-- Captured/Processed Image Preview -->
                             <img id="processedImage" src="" class="w-full h-full object-contain hidden-step absolute top-0 left-0 z-20 bg-white" alt="Processed">
                             
@@ -695,6 +701,7 @@
                 
                 document.getElementById('camera-placeholder').classList.add('hidden-step');
                 video.classList.remove('hidden-step');
+                document.getElementById('camera-guide').classList.remove('hidden-step'); // Show crop guide
                 
                 document.getElementById('btnStartCam').classList.add('hidden-step');
                 document.getElementById('btnSwitchCam').classList.remove('hidden-step');
@@ -717,6 +724,7 @@
                 stream.getTracks().forEach(track => track.stop());
                 stream = null;
             }
+            document.getElementById('camera-guide').classList.add('hidden-step');
         }
 
         async function captureAndRemoveBg() {
@@ -724,15 +732,26 @@
             const canvas = document.getElementById('canvas');
             const context = canvas.getContext('2d');
             
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            // --- NEW: PASSPORT SIZE AUTO-CROP LOGIC ---
+            // Calculate a perfect square crop from the center of the video feed
+            const minDim = Math.min(video.videoWidth, video.videoHeight);
+            const cropSize = minDim * 0.8; // Use 80% of the shortest side to frame the face tightly
+            const startX = (video.videoWidth - cropSize) / 2;
+            const startY = (video.videoHeight - cropSize) / 2;
+
+            canvas.width = cropSize;
+            canvas.height = cropSize;
             
-            // Cloudinary ke liye Data URL (Base64 with prefix) chahiye
+            // Draw ONLY the cropped square part into the canvas
+            context.drawImage(video, startX, startY, cropSize, cropSize, 0, 0, cropSize, cropSize);
+            // ------------------------------------------
+
+            // Get Data URL of the CROPPED image
             let base64Image = canvas.toDataURL('image/jpeg');
             
             document.getElementById('loadingOverlay').classList.remove('hidden-step');
             video.classList.add('hidden-step');
+            document.getElementById('camera-guide').classList.add('hidden-step'); // Hide guide
             document.getElementById('btnCapture').classList.add('hidden-step');
             document.getElementById('btnSwitchCam').classList.add('hidden-step');
             
@@ -748,10 +767,7 @@
                 formData.append('file', base64Image);
                 formData.append('upload_preset', uploadPreset);
                 
-                // FIXED: Unsigned presets me hum code se direct 'background_removal' nahi bhej sakte.
-                // Ye error 400 (Bad Request) deta hai. 
-                // Isliye is line ko comment kar diya hai. Aapko ye setting apne Cloudinary dashboard 
-                // me 'my_preset' ko edit karke 'Upload Manipulations' -> 'Background removal' -> 'Cloudinary AI' set karni hogi.
+                // Note: Keep this commented out if Cloudinary dashboard preset is set to remove background
                 // formData.append('background_removal', 'cloudinary_ai'); 
 
                 try {
