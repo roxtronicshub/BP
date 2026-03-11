@@ -19,14 +19,14 @@
             overflow: hidden;
             margin: 0 auto;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            flex-shrink: 0; /* Ensures it doesn't shrink on small screens */
+            flex-shrink: 0;
         }
         .id-header {
-            background-color: #1e3a8a; /* Deep Blue */
+            background-color: #1e3a8a;
             color: white;
             text-align: center;
             padding: 15px 10px;
-            border-bottom: 4px solid #ef4444; /* Red accent */
+            border-bottom: 4px solid #ef4444;
         }
         .id-header h2 {
             font-size: 16px;
@@ -89,11 +89,7 @@
             font-size: 10px;
             padding: 8px 0;
         }
-
-        /* Hide elements utility */
         .hidden-step { display: none !important; }
-        
-        /* Loading Spinner */
         .loader {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #3b82f6;
@@ -104,8 +100,6 @@
             margin: 10px auto;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* Orientation Visuals */
         .orientation-selector { display: flex; gap: 15px; }
         .orientation-card { 
             border: 2px solid #e2e8f0; border-radius: 8px; padding: 12px; cursor: pointer; 
@@ -116,43 +110,14 @@
         .orientation-card.active { border-color: #2563eb; background: #eff6ff; box-shadow: 0 0 0 2px #bfdbfe; }
         .visual-portrait { width: 24px; height: 38px; border: 2px solid #94a3b8; border-radius: 3px; margin-bottom: 8px; background: linear-gradient(to bottom, #e2e8f0 30%, transparent 30%); }
         .visual-landscape { width: 38px; height: 24px; border: 2px solid #94a3b8; border-radius: 3px; margin-bottom: 8px; background: linear-gradient(to right, #e2e8f0 30%, transparent 30%); }
-        
-        /* Landscape Mode Overrides */
-        .id-card-wrapper.landscape {
-            width: 420px;
-            height: 260px;
-        }
-        .id-card-wrapper.landscape .id-header {
-            padding: 8px 10px;
-        }
-        .id-card-wrapper.landscape .id-header h2 {
-            font-size: 14px;
-        }
-        .id-card-wrapper.landscape .id-body {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            padding: 10px 15px;
-            gap: 15px;
-        }
-        .id-card-wrapper.landscape .id-photo-container {
-            margin: 0;
-            width: 100px;
-            height: 100px;
-            flex-shrink: 0;
-        }
-        .id-card-wrapper.landscape .id-details {
-            text-align: left;
-            padding: 0;
-            flex: 1;
-        }
-        .id-card-wrapper.landscape .id-info-grid {
-            margin-top: 5px;
-            padding: 6px;
-        }
-        .id-card-wrapper.landscape .id-footer {
-            padding: 5px 0;
-        }
+        .id-card-wrapper.landscape { width: 420px; height: 260px; }
+        .id-card-wrapper.landscape .id-header { padding: 8px 10px; }
+        .id-card-wrapper.landscape .id-header h2 { font-size: 14px; }
+        .id-card-wrapper.landscape .id-body { display: flex; flex-direction: row; align-items: center; padding: 10px 15px; gap: 15px; }
+        .id-card-wrapper.landscape .id-photo-container { margin: 0; width: 100px; height: 100px; flex-shrink: 0; }
+        .id-card-wrapper.landscape .id-details { text-align: left; padding: 0; flex: 1; }
+        .id-card-wrapper.landscape .id-info-grid { margin-top: 5px; padding: 6px; }
+        .id-card-wrapper.landscape .id-footer { padding: 5px 0; }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
@@ -162,20 +127,18 @@
         <span id="toastMessage">Message here</span>
     </div>
 
-    <!-- Main Container -->
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden">
-        
-        <!-- Header -->
-        <div class="bg-blue-600 p-6 text-white text-center">
+        <div class="bg-blue-600 p-6 text-white text-center relative">
             <h1 class="text-2xl font-bold">Smart ID Card Generator</h1>
             <p class="text-blue-200 text-sm mt-1">Capture, Auto-Remove BG & Generate</p>
+            
+            <div id="fetchingDataIndicator" class="hidden-step absolute top-4 right-4 flex items-center gap-2 text-xs font-semibold bg-white/20 px-3 py-1 rounded-full">
+                <div class="loader" style="width: 12px; height: 12px; border-width: 2px; margin: 0;"></div>
+                Syncing...
+            </div>
         </div>
 
         <div class="p-6 md:p-8">
-            
-            <!-- ==========================================
-                 STEP 1: INSTITUTION SETUP (Only asked once)
-                 ========================================== -->
             <div id="step-1-setup">
                 <div class="mb-6">
                     <h2 class="text-xl font-semibold text-gray-800 border-b pb-2">Step 1: Institution Setup</h2>
@@ -197,10 +160,19 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Institution / Organization Name</label>
-                        <input type="text" id="instName" placeholder="e.g. Sagar Public School / ROXTRONICS" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                        <!-- AUTO-SUGGEST LIST WITH REFRESH BUTTON -->
+                        <div class="flex gap-2">
+                            <input type="text" id="instName" list="savedInstitutions" placeholder="Start typing or select from list..." class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                            <button type="button" onclick="fetchInstitutions(true)" class="bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 rounded-lg transition border border-blue-200 shadow-sm flex items-center justify-center" title="Refresh School List">
+                                🔄
+                            </button>
+                        </div>
+                        
+                        <datalist id="savedInstitutions">
+                            <!-- Options dynamically yahan aayenge -->
+                        </datalist>
                     </div>
 
-                    <!-- Extra Batch Details for School -->
                     <div id="schoolFields" class="hidden-step flex flex-col gap-3">
                         <div class="flex gap-3">
                             <div class="flex-1">
@@ -241,15 +213,12 @@
                                 </select>
                             </div>
                         </div>
-                        
-                        <!-- Stream Field (Appears only for 11th & 12th) -->
                         <div id="streamFieldContainer" class="hidden-step">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Stream</label>
                             <input type="text" id="schoolStream" placeholder="e.g. PCM, PCB, Commerce, Arts" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
                         </div>
                     </div>
 
-                    <!-- Extra Batch Details for College -->
                     <div id="collegeFields" class="hidden-step flex gap-3">
                         <div class="flex-1">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Year</label>
@@ -269,7 +238,6 @@
                         </div>
                     </div>
 
-                    <!-- General Settings (Orientation) -->
                     <div class="mt-2 p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-sm">
                         <label class="block text-sm font-bold text-gray-800 mb-3">ID Card Layout / Orientation</label>
                         <div class="orientation-selector">
@@ -284,7 +252,6 @@
                         </div>
                     </div>
 
-                    <!-- Dynamic Field Selector & Global Title -->
                     <div id="customFieldsSection" class="hidden-step mt-2 p-4 bg-blue-50 border border-blue-100 rounded-lg shadow-inner">
                         <label class="block text-sm font-bold text-blue-800 mb-2">Customize ID Card Fields</label>
                         <p class="text-xs text-blue-600 mb-3">Select fields you want to print on the ID Card (for Step 2):</p>
@@ -309,11 +276,8 @@
                             <option value="ADDRESS">ADDRESS</option>
                         </select>
 
-                        <div id="selectedFieldsContainer" class="flex flex-wrap gap-2 mt-3">
-                            <!-- Tags will appear here -->
-                        </div>
+                        <div id="selectedFieldsContainer" class="flex flex-wrap gap-2 mt-3"></div>
 
-                        <!-- Global Title Field directly in Step 1 -->
                         <div class="mt-4 border-t border-blue-200 pt-3">
                             <label class="block text-sm font-bold text-blue-800 mb-1">ID Card Title / Designation</label>
                             <p class="text-[11px] text-blue-600 mb-2">Ye title har card par photo ke niche print hoga (e.g., Student, Manager).</p>
@@ -327,11 +291,7 @@
                 </div>
             </div>
 
-            <!-- ==========================================
-                 STEP 2: CANDIDATE ENTRY (Loop Screen)
-                 ========================================== -->
             <div id="step-2-candidate" class="hidden-step">
-                <!-- Institution Info Header -->
                 <div class="bg-blue-50 rounded-lg p-4 mb-6 flex justify-between items-center border border-blue-100">
                     <div>
                         <span id="displayCategory" class="text-xs font-bold uppercase tracking-wider text-blue-500">School</span>
@@ -345,38 +305,31 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     
-                    <!-- Left Column: Photo Capture -->
                     <div class="space-y-4">
                         <h3 class="font-semibold text-gray-700 border-b pb-1">1. Capture Photo</h3>
                         
                         <div id="camera-container" class="bg-gray-100 rounded-lg overflow-hidden border-2 border-dashed border-gray-300 flex flex-col items-center justify-center relative" style="height: 240px;">
-                            
-                            <!-- Video Element -->
                             <video id="videoElement" autoplay playsinline class="w-full h-full object-cover hidden-step absolute top-0 left-0 z-10"></video>
                             
-                            <!-- NEW: Camera Overlay Guide for Passport Size -->
+                            <!-- Passport size box guide -->
                             <div id="camera-guide" class="hidden-step absolute inset-0 z-[15] pointer-events-none flex flex-col items-center justify-center overflow-hidden">
                                 <div class="w-44 h-44 border-2 border-white border-dashed rounded-xl relative" style="box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);"></div>
                                 <p class="text-white text-xs mt-3 font-semibold drop-shadow-md z-20">Align face inside the frame</p>
                             </div>
 
-                            <!-- Captured/Processed Image Preview -->
                             <img id="processedImage" src="" class="w-full h-full object-contain hidden-step absolute top-0 left-0 z-20 bg-white" alt="Processed">
                             
-                            <!-- Default State -->
                             <div id="camera-placeholder" class="text-center p-4 z-0">
                                 <svg class="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                 <p class="text-sm text-gray-500">Camera not started</p>
                             </div>
 
-                            <!-- Loading Overlay -->
                             <div id="loadingOverlay" class="hidden-step absolute top-0 left-0 w-full h-full bg-white/80 z-30 flex flex-col items-center justify-center">
                                 <div class="loader"></div>
                                 <p class="text-sm font-semibold text-blue-600 mt-2">Removing Background...</p>
                             </div>
                         </div>
 
-                        <!-- Camera Controls (Added Switch Camera for Mobile) -->
                         <div class="flex gap-2">
                             <button id="btnStartCam" onclick="startCamera()" class="flex-1 bg-gray-800 hover:bg-gray-900 text-white py-2 rounded-md text-sm font-medium transition">
                                 Start Camera
@@ -384,27 +337,19 @@
                             <button id="btnSwitchCam" onclick="switchCamera()" class="hidden-step bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-3 rounded-md transition" title="Switch Front/Back Camera">
                                 🔄
                             </button>
-                            <button id="btnCapture" onclick="captureAndRemoveBg()" disabled class="flex-1 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-2 rounded-md text-sm font-medium transition">
+                            <button id="btnCapture" onclick="captureAndRemoveBg()" disabled class="hidden-step flex-1 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-2 rounded-md text-sm font-medium transition">
                                 Click Photo
                             </button>
                             <button id="btnRetake" onclick="retakePhoto()" class="hidden-step flex-1 bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-md text-sm font-medium transition">
                                 Retake
                             </button>
                         </div>
-                        
-                        <!-- Hidden Canvas for capturing frame -->
                         <canvas id="canvas" class="hidden-step"></canvas>
                     </div>
 
-                    <!-- Right Column: Personal Details Form -->
                     <div class="space-y-4">
                         <h3 class="font-semibold text-gray-700 border-b pb-1">2. Candidate Details</h3>
-                        
-                        <!-- Dynamic Form (Generated based on selected fields for ALL categories) -->
-                        <div id="dynamicCandidateForm" class="space-y-3 grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <!-- Input fields will be generated here -->
-                        </div>
-                        
+                        <div id="dynamicCandidateForm" class="space-y-3 grid grid-cols-1 md:grid-cols-2 gap-3"></div>
                         <div class="pt-4">
                             <button onclick="generatePreview()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition shadow-md flex justify-center items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
@@ -419,21 +364,15 @@
         </div>
     </div>
 
-    <!-- ==========================================
-         STEP 3: PREVIEW & CONFIRM MODAL
-         ========================================== -->
+    <!-- PREVIEW MODAL -->
     <div id="previewModal" class="fixed inset-0 bg-gray-900/80 z-50 flex items-center justify-center hidden-step backdrop-blur-sm p-4 overflow-y-auto">
         <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-lg my-auto">
             <h3 class="text-lg font-bold text-center text-gray-800 mb-4 border-b pb-2">Review ID Card</h3>
-            
-            <!-- Added a wrapper here so landscape fits mobile screens -->
             <div class="w-full overflow-x-auto flex justify-center py-2">
-                <!-- Actual ID Card Design -->
                 <div class="id-card-wrapper" id="idCardContainer">
                     <div class="id-header">
                         <h2 id="cardInstName">Institution Name</h2>
                     </div>
-                    
                     <div class="id-body">
                         <div class="id-photo-container">
                             <img id="cardPhoto" src="" alt="Photo">
@@ -441,28 +380,21 @@
                         <div class="id-details">
                             <div id="cardName" class="id-name">Student Name</div>
                             <div id="cardSubtext" class="id-subtext">Student</div>
-                            
-                            <!-- Dynamic Custom Grid (For all categories) -->
-                            <div id="dynamicCardGrid" class="id-info-grid">
-                                <!-- Custom details will appear here -->
-                            </div>
+                            <div id="dynamicCardGrid" class="id-info-grid"></div>
                         </div>
                     </div>
-                    
                     <div class="id-footer">
                         ID Card Generated via Smart Portal
                     </div>
                 </div>
             </div>
-
-            <!-- Action Buttons -->
             <div class="flex gap-3 mt-6">
                 <button onclick="closePreviewModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-medium transition">
                     Edit Details
                 </button>
-                <button onclick="confirmAndSave()" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg font-bold transition shadow flex justify-center items-center gap-1">
+                <button id="btnSaveCard" onclick="confirmAndSave()" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg font-bold transition shadow flex justify-center items-center gap-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                    Save Data
+                    <span>Save Data</span>
                 </button>
             </div>
         </div>
@@ -470,17 +402,51 @@
 
     <!-- Javascript Logic -->
     <script>
-        // State Variables
         let currentPhotoUrl = "";
         let stream = null;
         let isPhotoCaptured = false;
         let currentOrientation = 'portrait';
-        let currentFacingMode = 'environment'; // 'environment' = back camera, 'user' = front camera
-        
-        // Custom Fields State (Unified for all categories)
+        let currentFacingMode = 'environment';
         let activeFields = [];
 
-        // --- Orientation Logic ---
+        // USER KA GOOGLE SCRIPT URL YAHAN HAI
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzgwC8qISBlF_KDdUbQpecHVPTQIKIZNRTIfPoHHUvUhcHOBwuDFbycbbOALhclWkTFmg/exec";
+
+        // ==========================================
+        // FETCH SAVED INSTITUTIONS (Separate Function)
+        // ==========================================
+        async function fetchInstitutions(showToastMsg = false) {
+            const indicator = document.getElementById('fetchingDataIndicator');
+            indicator.classList.remove('hidden-step');
+            try {
+                let response = await fetch(GOOGLE_SCRIPT_URL);
+                let data = await response.json();
+                
+                if (data.status === 'success' && data.institutions) {
+                    const datalist = document.getElementById('savedInstitutions');
+                    datalist.innerHTML = ''; 
+                    
+                    data.institutions.forEach(inst => {
+                        let option = document.createElement('option');
+                        option.value = inst;
+                        datalist.appendChild(option);
+                    });
+                    
+                    if(showToastMsg) {
+                        showToast("School list updated!", true);
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching institutions:", error);
+                if(showToastMsg) showToast("Failed to fetch list.");
+            } finally {
+                indicator.classList.add('hidden-step');
+            }
+        }
+
+        // Run automatically when page loads
+        window.addEventListener('load', () => fetchInstitutions(false));
+
         function setOrientation(type) {
             currentOrientation = type;
             document.getElementById('opt-portrait').classList.remove('active');
@@ -488,12 +454,11 @@
             document.getElementById(`opt-${type}`).classList.add('active');
         }
 
-        // --- Custom Fields Logic ---
         function renderCustomFields() {
             const container = document.getElementById('selectedFieldsContainer');
             container.innerHTML = '';
             activeFields.forEach(field => {
-                const isMandatory = field.includes('NAME'); // Name cannot be deleted
+                const isMandatory = field.includes('NAME'); 
                 container.innerHTML += `
                     <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-[11px] font-medium flex items-center gap-1.5 shadow-sm">
                         ${field} 
@@ -510,7 +475,7 @@
                 activeFields.push(val);
                 renderCustomFields();
             }
-            sel.value = ""; // reset dropdown
+            sel.value = ""; 
         }
 
         function removeCustomField(field) {
@@ -518,7 +483,6 @@
             renderCustomFields();
         }
 
-        // --- Custom Toast Notification Logic ---
         function showToast(message, isSuccess = false) {
             const toast = document.getElementById('toast');
             const toastMessage = document.getElementById('toastMessage');
@@ -536,7 +500,6 @@
             }, 3000);
         }
 
-        // --- Step 1 to Step 2 Logic ---
         function handleCategoryChange() {
             const category = document.getElementById('instCategory').value;
             const schoolFields = document.getElementById('schoolFields');
@@ -565,7 +528,7 @@
                 schoolFields.classList.add('hidden-step');
                 collegeFields.classList.add('hidden-step');
                 streamFieldContainer.classList.add('hidden-step');
-                activeFields = ['FULL NAME', 'PHONE NO.', 'ADDRESS']; // Generic fields for Individual
+                activeFields = ['FULL NAME', 'PHONE NO.', 'ADDRESS'];
                 titleInput.value = 'Staff / Member';
             } else {
                 schoolFields.classList.add('hidden-step');
@@ -604,7 +567,6 @@
                 return;
             }
 
-            // Validate batch fields if visible
             let b1 = "", b2 = "", stream = "";
             if (cat === 'School') {
                 b1 = document.getElementById('schoolClass').value;
@@ -623,7 +585,6 @@
                 }
             }
 
-            // Setup Step 2 UI for Individual Form
             let batchInfoText = "";
             if (cat === 'School') {
                 let streamText = stream ? ` (${stream})` : "";
@@ -635,7 +596,7 @@
             }
 
             const dynamicForm = document.getElementById('dynamicCandidateForm');
-            dynamicForm.innerHTML = ''; // clear previous
+            dynamicForm.innerHTML = '';
 
             activeFields.forEach(field => {
                 let defaultVal = "";
@@ -646,7 +607,6 @@
                     defaultVal = `${b1}${b2 ? ' / ' + b2 : ''}`;
                 }
 
-                // Special handling for full width fields
                 const isFullWidth = (field.includes('NAME') || field === 'ADDRESS') ? 'col-span-1 md:col-span-2' : '';
                 const safeId = field.replace(/[^a-zA-Z0-9]/g, '_');
                 const inputType = field === 'DOB' ? 'date' : 'text';
@@ -659,7 +619,6 @@
                 `;
             });
 
-            // Update UI headers
             document.getElementById('displayCategory').innerText = cat;
             document.getElementById('displayInstName').innerText = inst;
             
@@ -673,7 +632,6 @@
 
             document.getElementById('cardInstName').innerText = inst;
 
-            // Switch screens
             document.getElementById('step-1-setup').classList.add('hidden-step');
             document.getElementById('step-2-candidate').classList.remove('hidden-step');
         }
@@ -681,14 +639,12 @@
         function editInstitution() {
             document.getElementById('step-2-candidate').classList.add('hidden-step');
             document.getElementById('step-1-setup').classList.remove('hidden-step');
-            stopCamera(); // Stop camera if going back
+            stopCamera();
         }
 
-        // --- Camera & Photo Logic (Mobile Optimized) ---
         async function startCamera() {
             const video = document.getElementById('videoElement');
             try {
-                // Requesting ideal high resolution forces mobile cameras to trigger continuous autofocus better
                 const constraints = {
                     video: { 
                         facingMode: currentFacingMode,
@@ -701,10 +657,12 @@
                 
                 document.getElementById('camera-placeholder').classList.add('hidden-step');
                 video.classList.remove('hidden-step');
-                document.getElementById('camera-guide').classList.remove('hidden-step'); // Show crop guide
+                document.getElementById('camera-guide').classList.remove('hidden-step'); 
                 
                 document.getElementById('btnStartCam').classList.add('hidden-step');
                 document.getElementById('btnSwitchCam').classList.remove('hidden-step');
+                
+                document.getElementById('btnCapture').classList.remove('hidden-step');
                 document.getElementById('btnCapture').disabled = false;
                 
             } catch (err) {
@@ -732,44 +690,33 @@
             const canvas = document.getElementById('canvas');
             const context = canvas.getContext('2d');
             
-            // --- NEW: PASSPORT SIZE AUTO-CROP LOGIC ---
-            // Calculate a perfect square crop from the center of the video feed
             const minDim = Math.min(video.videoWidth, video.videoHeight);
-            const cropSize = minDim * 0.8; // Use 80% of the shortest side to frame the face tightly
+            const cropSize = minDim * 0.8; 
             const startX = (video.videoWidth - cropSize) / 2;
             const startY = (video.videoHeight - cropSize) / 2;
 
             canvas.width = cropSize;
             canvas.height = cropSize;
             
-            // Draw ONLY the cropped square part into the canvas
             context.drawImage(video, startX, startY, cropSize, cropSize, 0, 0, cropSize, cropSize);
-            // ------------------------------------------
 
-            // Get Data URL of the CROPPED image
             let base64Image = canvas.toDataURL('image/jpeg');
             
             document.getElementById('loadingOverlay').classList.remove('hidden-step');
             video.classList.add('hidden-step');
-            document.getElementById('camera-guide').classList.add('hidden-step'); // Hide guide
+            document.getElementById('camera-guide').classList.add('hidden-step'); 
             document.getElementById('btnCapture').classList.add('hidden-step');
             document.getElementById('btnSwitchCam').classList.add('hidden-step');
             
-            // ==========================================
-            // CLOUDINARY API INTEGRATION
-            // ==========================================
-            const cloudName = "dpebnlyhr"; // Aapka Cloud Name
-            const uploadPreset = "my_preset"; // YAHAN APNA UNSIGNED UPLOAD PRESET DALEIN
-            const useRealApi = true; // MUST BE TRUE FOR ACTUAL API CALL
+            const cloudName = "dpebnlyhr"; 
+            const uploadPreset = "my_preset"; 
+            const useRealApi = true; 
             
             if(useRealApi) {
                 let formData = new FormData();
                 formData.append('file', base64Image);
                 formData.append('upload_preset', uploadPreset);
                 
-                // Note: Keep this commented out if Cloudinary dashboard preset is set to remove background
-                // formData.append('background_removal', 'cloudinary_ai'); 
-
                 try {
                     let response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
                         method: 'POST',
@@ -778,13 +725,9 @@
 
                     if(response.ok) {
                         let data = await response.json();
-                        
-                        // Cloudinary on-the-fly background remove karta hai
                         let bgRemovedUrl = data.secure_url.replace('/upload/', '/upload/e_background_removal/');
-                        
                         currentPhotoUrl = bgRemovedUrl;
                         
-                        // Image server par banne me 1-2 second lagte hain, isliye preload kar rahe hain
                         let tempImg = new Image();
                         tempImg.onload = () => {
                             document.getElementById('loadingOverlay').classList.add('hidden-step');
@@ -804,7 +747,6 @@
                         tempImg.src = currentPhotoUrl;
 
                     } else {
-                        // Detailed Error Handling
                         let errData = await response.json();
                         console.error("Cloudinary Detailed Error:", errData);
                         let errMsg = errData.error ? errData.error.message : "Make sure Upload Preset is correct.";
@@ -835,14 +777,17 @@
         function retakePhoto() {
             document.getElementById('processedImage').classList.add('hidden-step');
             document.getElementById('btnRetake').classList.add('hidden-step');
+            
             document.getElementById('btnCapture').classList.remove('hidden-step');
+            document.getElementById('btnCapture').disabled = false;
+            
             document.getElementById('btnSwitchCam').classList.remove('hidden-step');
+            
             isPhotoCaptured = false;
             currentPhotoUrl = "";
             startCamera();
         }
 
-        // --- Preview & Save Logic ---
         function generatePreview() {
             if(!isPhotoCaptured) {
                 showToast("Please click a photo first!");
@@ -852,7 +797,6 @@
             const cat = document.getElementById('instCategory').value;
             document.getElementById('cardPhoto').src = currentPhotoUrl;
             
-            // Set Orientation in Preview
             const cardContainer = document.getElementById('idCardContainer');
             if (currentOrientation === 'landscape') {
                 cardContainer.classList.add('landscape');
@@ -860,7 +804,6 @@
                 cardContainer.classList.remove('landscape');
             }
 
-            // Find name field dynamically
             let nameField = activeFields.find(f => f.includes('NAME'));
             let nameVal = nameField ? document.getElementById(`dyn_${nameField.replace(/[^a-zA-Z0-9]/g, '_')}`).value.trim() : "";
             
@@ -871,7 +814,6 @@
 
             document.getElementById('cardName').innerText = nameVal;
             
-            // Retrieve Global Title directly from Step 1
             let titleVal = document.getElementById('globalTitle').value.trim() || "Title Required";
             document.getElementById('cardSubtext').innerText = titleVal;
             
@@ -879,7 +821,6 @@
             dynamicGrid.innerHTML = '';
 
             activeFields.forEach(field => {
-                // Name is already in header section, skip it from the details grid
                 if (field === nameField) return; 
                 
                 const safeId = field.replace(/[^a-zA-Z0-9]/g, '_');
@@ -893,7 +834,6 @@
                 `;
             });
 
-            // Show Modal
             document.getElementById('previewModal').classList.remove('hidden-step');
         }
 
@@ -901,35 +841,99 @@
             document.getElementById('previewModal').classList.add('hidden-step');
         }
 
-        function confirmAndSave() {
-            showToast("Data Saved Successfully!", true);
+        async function confirmAndSave() {
+            const btnSave = document.getElementById('btnSaveCard');
+            const originalBtnHtml = btnSave.innerHTML;
             
-            closePreviewModal();
-            
-            // Clear all dynamic fields except the pre-populated batch/class info
+            const cat = document.getElementById('instCategory').value;
+            const inst = document.getElementById('instName').value;
+            let titleVal = document.getElementById('globalTitle').value.trim() || "N/A";
+
+            let batchInfoText = "";
+            if (cat === 'School') {
+                let b1 = document.getElementById('schoolClass').value;
+                let b2 = document.getElementById('schoolSection').value;
+                let stream = document.getElementById('schoolStream').value.trim();
+                let streamText = stream ? ` (${stream})` : "";
+                batchInfoText = `Class: ${b1}${streamText} ${b2 ? '| Sec: '+b2 : ''}`;
+            } else if (cat === 'College') {
+                let b1 = document.getElementById('collegeYear').value;
+                let b2 = document.getElementById('collegeSem').value;
+                batchInfoText = `Year: ${b1} ${b2 ? '| Sem: '+b2 : ''}`;
+            } else {
+                batchInfoText = "N/A";
+            }
+
+            let nameField = activeFields.find(f => f.includes('NAME'));
+            let studentName = nameField ? document.getElementById(`dyn_${nameField.replace(/[^a-zA-Z0-9]/g, '_')}`).value.trim() : "Unknown";
+
+            let dynamicData = {};
             activeFields.forEach(field => {
                 const safeId = field.replace(/[^a-zA-Z0-9]/g, '_');
-                const inputElem = document.getElementById(`dyn_${safeId}`);
-                if(inputElem && field !== 'CLASS/SEC' && field !== 'YEAR/SEM') {
-                    inputElem.value = "";
-                }
+                const val = document.getElementById(`dyn_${safeId}`).value.trim() || "-";
+                dynamicData[field] = val;
             });
-            
-            // Re-focus on Name field for rapid entry
-            let nameField = activeFields.find(f => f.includes('NAME'));
-            if(nameField) {
-                const nameInput = document.getElementById(`dyn_${nameField.replace(/[^a-zA-Z0-9]/g, '_')}`);
-                if(nameInput) nameInput.focus();
+
+            const payload = {
+                institutionName: inst,
+                category: cat,
+                title: titleVal,
+                batchInfo: batchInfoText,
+                studentName: studentName,
+                photoUrl: currentPhotoUrl,
+                dynamicFields: dynamicData
+            };
+
+            btnSave.disabled = true;
+            btnSave.innerHTML = `<div class="loader" style="width: 15px; height: 15px; border-width: 2px; margin: 0; display: inline-block;"></div> <span class="ml-2">Saving...</span>`;
+
+            try {
+                let response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "text/plain;charset=utf-8",
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if(response.ok) {
+                    showToast("Data Saved to Google Sheets!", true);
+                    closePreviewModal();
+                    
+                    activeFields.forEach(field => {
+                        const safeId = field.replace(/[^a-zA-Z0-9]/g, '_');
+                        const inputElem = document.getElementById(`dyn_${safeId}`);
+                        if(inputElem && field !== 'CLASS/SEC' && field !== 'YEAR/SEM') {
+                            inputElem.value = "";
+                        }
+                    });
+                    
+                    if(nameField) {
+                        const nameInput = document.getElementById(`dyn_${nameField.replace(/[^a-zA-Z0-9]/g, '_')}`);
+                        if(nameInput) nameInput.focus();
+                    }
+                    
+                    document.getElementById('processedImage').classList.add('hidden-step');
+                    document.getElementById('btnRetake').classList.add('hidden-step');
+                    document.getElementById('camera-placeholder').classList.remove('hidden-step');
+                    document.getElementById('btnStartCam').classList.remove('hidden-step');
+                    document.getElementById('btnSwitchCam').classList.add('hidden-step');
+                    
+                    document.getElementById('btnCapture').classList.remove('hidden-step');
+                    document.getElementById('btnCapture').disabled = true;
+                    
+                    isPhotoCaptured = false;
+                    currentPhotoUrl = "";
+                } else {
+                    showToast("Error saving data. Please try again.");
+                }
+            } catch (error) {
+                console.error("Save Error:", error);
+                showToast("Network error. Could not connect to Google Sheets.");
+            } finally {
+                btnSave.disabled = false;
+                btnSave.innerHTML = originalBtnHtml;
             }
-            
-            // Reset Photo UI
-            document.getElementById('processedImage').classList.add('hidden-step');
-            document.getElementById('btnRetake').classList.add('hidden-step');
-            document.getElementById('camera-placeholder').classList.remove('hidden-step');
-            document.getElementById('btnStartCam').classList.remove('hidden-step');
-            document.getElementById('btnSwitchCam').classList.add('hidden-step');
-            isPhotoCaptured = false;
-            currentPhotoUrl = "";
         }
     </script>
 </body>
